@@ -17,25 +17,25 @@ const usuarios = [
 ]
 
 function calculaSaldo(receitas, despesas) {
-    const somaReceita=somaNumeros(receitas)
-    const somaDespesa=somaNumeros(despesas)
-    const saldo=somaReceita-somaDespesa
+    const somaReceita = somaNumeros(receitas)
+    const somaDespesa = somaNumeros(despesas)
+    const saldo = somaReceita - somaDespesa
     return saldo
 }
 
 function somaNumeros(numeros) {
-    let soma=0
+    let soma = 0
     for (let numero of numeros) {
-        soma+= numero
+        soma += numero
     }
     return soma
-  }
+}
 
-  for (let i = 0; i < usuarios.length; i++) {
-      const saldoUsuario=calculaSaldo(usuarios[i].receitas, usuarios[i].despesas)
-      if (saldoUsuario > 0) {
-          console.log(`O usuário ${usuarios.nome} possui saldo POSITIVO de ${saldoUsuario}`)
-      } else {
+for (let i = 0; i < usuarios.length; i++) {
+    const saldoUsuario = calculaSaldo(usuarios[i].receitas, usuarios[i].despesas)
+    if (saldoUsuario > 0) {
+        console.log(`O usuário ${usuarios.nome} possui saldo POSITIVO de ${saldoUsuario}`)
+    } else {
         console.log(`O usuário ${usuarios.nome} possui saldo NEGATIVO de ${saldoUsuario}`)
-      }
     }
+}

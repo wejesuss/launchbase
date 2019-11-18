@@ -27,18 +27,18 @@ function mensagemTurma(media, nomeTurma) {
         console.log(`A média da turma ${nomeTurma} é menor que 5`)
     }
 }
- 
-function marcaALunoReprovado (aluno) {
-        aluno.reprovado=false
+
+function marcaALunoReprovado(aluno) {
+    aluno.reprovado = false
     if (aluno.nota < 5) {
         aluno.reprovado = true
-    } 
+    }
 }
 
-function messagemAlunoReprovado (aluno) {
+function messagemAlunoReprovado(aluno) {
     if (aluno.reprovado) {
         console.log(`O aluno ${aluno.nome} está reprovado`)
-    } 
+    }
 }
 
 function alunosReprovado(alunos) {

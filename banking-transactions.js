@@ -16,12 +16,12 @@ function createTransaction(transaction) {
 
 function getHigherTransactionByType(type) {
   let higherValue = 0
-  let higherTransaction 
+  let higherTransaction
   for (let transaction of user.transactions) {
     if (type == transaction.type && higherValue < transaction.value) {
       higherValue = transaction.value
       higherTransaction = transaction
-    } 
+    }
   }
   console.log(higherTransaction)
 }
@@ -31,7 +31,7 @@ function getAverageTransactionValue() {
   let sumTransactions = 0
   let average = 0
   for (let transaction of user.transactions) {
-    count ++
+    count++
     sumTransactions += transaction.value
   }
   average = sumTransactions / count
@@ -45,9 +45,9 @@ function getTransactionsCount() {
   }
   for (let transaction of user.transactions) {
     if (transaction.type == 'credit') {
-      count.credit ++
+      count.credit++
     } else {
-      count.debit ++
+      count.debit++
     }
   }
   console.log(count)
@@ -62,7 +62,7 @@ function getLessTransactionByType(type) {
     if (!lessTransaction && transaction.type === type) {
       lessTransaction = transaction;
     }
-    
+
     if (transaction.type === type && lessTransaction.value > transaction.value) {
       lessTransaction = transaction;
     }
