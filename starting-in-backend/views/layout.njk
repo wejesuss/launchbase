@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/styles.css">
+    {% block head %}
+    <title>Mayk Brito</title>
+
+    {% endblock %}
+
+</head>
+
+<body>
+    <header>
+        <div class="menu">
+            <a id="about" href="/">Sobre</a>
+            <a id="classes" href="/portfolio">Aulas</a>
+        </div>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+</body>
+
+</html>
