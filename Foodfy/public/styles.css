@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: white;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+}
+
+a {
+    text-decoration: none;
+}
+
+.wrapper {
+    width: 940px;
+    margin: 0 auto;
+}
+
+header {
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    align-items: center;
+}
+
+.menus a {
+    text-decoration: none;
+    font-size: 16px;
+    color: #111111;
+    margin-right: 30px;
+}
+
+.hero {
+    background: #FBDFDB;
+    border-radius: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.presentation {
+    width: 316px;
+    align-self: center;
+    padding-left: 60px;
+}
+
+
+.presentation h1 {
+    font-size: 32px;
+    color: #111111;
+    line-height: 38px;
+    margin-bottom: 10px;
+}
+
+.presentation p {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.7);
+    line-height: 28px;
+}
+
+.hero img {
+    justify-self: center;
+    padding-top: 66px;
+}
+
+.hero img:hover {
+    border-radius: 5px;
+    filter: opacity(80%);
+}
+
+main {
+    width: 940px;
+    margin: 50px auto;
+    min-height: 80vh;
+}
+
+main section h2 {
+    font-size: 24px;
+    color: #111111;
+    line-height: 28px;
+    margin-bottom: 20px;
+}
+
+main section h3 {
+    font-size: 20px;
+    color: #111111;
+    line-height: 24px;
+    margin-bottom: 20px;
+}
+
+main section p {
+    font-size: 18px;
+    color: #444444;
+    line-height: 28px;
+    margin-bottom: 30px;
+}
+
+main h3 {
+    font-size: 24px;
+    color: #111111;
+    line-height: 28px;
+    margin-bottom: 20px;
+}
+
+.recipes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 30px 20px;
+}
+
+.card {
+    width: 300px;
+}
+
+.card img {
+    width: 100%;
+    border-radius: 15px;
+    height: 140px;
+}
+
+.card h5 {
+    font-size: 18px;
+    color: #111111;
+    line-height: 21px;
+    font-weight: normal;
+    margin: 20px 0 6px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #777777;
+    line-height: 16px;
+}
+
+footer {
+    background: #EEEEEE;
+    padding: 20px 0;
+    font-size: 14px;
+    color: #999999;
+    text-align: center;
+    width: 100%;
+    bottom: 0;
+}
+
+/* === PAGE RECIPE === */
+.recipe {
+    width: 940px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    min-height: 80vh;
+}
+
+/* recipe-header  */
+.recipe-header {
+    width: 100%;
+    text-align: center;
+}
+
+.recipe-header img{
+    width: 100%;
+    height: 280px;
+    border-radius: 15px;
+    margin-top: 30px;
+}
+
+.recipe-header h2{
+    margin-top: 50px;
+    font-size: 36px;
+    color: #111111;
+    line-height: 42px;
+}
+
+.recipe-header p{
+    margin: 4px 0 60px;
+    font-size: 20px;
+    color: #777777;
+    line-height: 24px;
+}
+
+/* === RECIPE CONTENT === */
+
+.recipe-content {
+    margin-bottom: 50px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.recipe-menu {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 20px;
+}
+
+.recipe-menu h3 {
+    margin-right: 8px;
+    font-size: 24px;
+    color: #111111;
+    line-height: 28px;
+}
+
+.recipe-menu h4 {
+    margin-right: 8px;
+    font-size: 12px;
+    color: #999999;
+    line-height: 14px;
+    cursor: pointer;
+}
+
+#ingredients {
+    margin-bottom: 35px;
+}
+
+#preparation {
+    margin-bottom: 35px;
+}
+
+#information p {
+    font-size: 18px;
+    color: #444444;
+    line-height: 28px;
+    text-align: justify;
+}
+
+/* === RECIPE INGREDIENTS LISTS === */
+
+li {
+    font-size: 18px;
+    color: #444444;
+    line-height: 28px;
+    list-style-position: inside;
+}
+
+/* === HIDE AND SHOW CONTENTS === */
+
+.topic-content.hidden {
+    display: none;
+}

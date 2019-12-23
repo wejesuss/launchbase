@@ -1,0 +1,72 @@
+{% extends "layout.njk" %}
+
+{% block head %}
+    <title>Receita de
+        {{recipe.title}}</title>
+    <style>
+        .menus #recipe {
+            font-weight: bold;
+        }
+    </style>
+{% endblock head %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<div class="recipe">
+
+        <div class="recipe-header">
+            <img src="{{recipe.image}}" alt="{{recipe.title}}">
+            <h2>{{recipe.title}}</h2>
+            <p>por {{recipe.author}}</p>
+        </div>
+
+        <div class="recipe-content">
+
+            <div id="ingredients" class="topic">
+            <div class="recipe-menu">
+                <h3>Ingredientes</h3>
+                <h4>ESCONDER</h4>
+            </div>
+                <div class="topic-content">
+                    <ul>
+                        {% for ingredient in recipe.ingredients %}
+                            <li>{{ingredient}}</li>
+                        {% endfor %}
+                    </ul>
+
+                </div> {# DIV COBRINDO LISTA DE INGREDIENTES#}
+
+            </div> {# DIV COBRINDO CONTEUDO DE INGREDIENTES#}
+
+            <div id="preparation" class="topic">
+            <div class="recipe-menu">
+                <h3>Modo de preparo</h3>
+                <h4>MOSTRAR</h4>
+            </div>
+                <div class="topic-content hidden">
+                    <ul>
+                        {% for preparation in recipe.preparation %}
+                            <li>{{preparation}}</li>
+                        {% endfor %}
+                    </ul>
+
+                </div> {# DIV COBRINDO LISTA DE PREPARO#}
+        
+            </div> {# DIV COBRINDO CONTEUDO PREPARACAO#}
+
+            <div id="information" class="topic">
+            <div class="recipe-menu">
+                <h3>Informações adicionais</h3>
+                <h4>ESCONDER</h4>
+            </div>
+                <div class="topic-content">
+                    <p>{{recipe.information}}</p>
+                </div> {# DIV COBRINDO LISTA DE INFORMACOES#}
+
+            </div> {# DIV COBRINDO CONTEUDO DE INFORMACOES#}
+
+        </div> {# DIV COBRINDO CONTEUDO RECEITA#}
+
+</div> {# DIV COBRINDO TUDO#}
+{% endblock content %}

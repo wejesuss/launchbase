@@ -1,0 +1,32 @@
+{% extends "layout.njk" %}
+
+{% block head %}
+    <title>Receitas</title>
+    <style>
+    .menus #recipes {
+    font-weight: bold;
+    }
+    </style>
+{% endblock head %}
+
+    {% block header %}
+    
+    {% endblock header %}
+    
+    {% block content %}
+    <main>
+        <div class="recipes">
+        {% for recipe in recipes %}
+        <a href="/recipes/{{recipe.id}}">
+            <div class="card">
+                <img src="{{recipe.image}}" alt="{{recipe.title}}">
+                <h5>{{recipe.title}}</h5>
+                <p>por {{recipe.author}}</p>
+            </div>
+        </a>
+        {% endfor %}
+
+        </div>
+    </main>
+
+{% endblock content %}
