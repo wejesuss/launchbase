@@ -35,7 +35,7 @@ server.get("/portfolio", function (req, res) {
 })
 
 server.get("/video", function (req, res) {
-    const id = req.query.id
+    const {id} = req.query
 
     const video = videos.find(function(video){
         return video.id == id

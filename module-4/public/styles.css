@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+
+:root {
+    --primary-color:#7159c1;
+    --secondary-color:#777;
+    --tertiary-color:#F7DF1E;
+}
+
+* {
+    padding: 0;
+    border: none;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--primary-color);
+    
+}
+
+header {
+    width: 100%;
+    background-color: white;
+    padding: 32px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.links {
+    font-size: 22px;
+}
+
+.links a + a {
+    margin-left: 32px;
+}
+
+.links a {
+    color: var(--secondary-color);
+    position: relative;
+}
+
+.links a:hover {
+    color: var(--primary-color);
+    filter: brightness(0.7);
+    
+}
+
+.links a.active {
+    color: var(--primary-color);
+    font-weight: bold;
+
+}
+
+.links a::after {
+    content: "";
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -10%;
+}
+
+.links a:hover::after {
+    width: 100%;
+    
+    transition: all ease-in-out 300ms ;
+
+}
+
+/* === CARD === */
+
+.card {
+    background-color: white;
+    width: 800px;
+    min-height: 400px;
+    margin: 45px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    /* box shadow */
+    box-shadow: 10px 10px 35px -2px rgba(0, 0, 0, 0.5);
+
+    /* animation */
+    animation: down 300ms ease-in;
+
+}
+
+/* === DETAILS === */
+
+.details {
+    padding: 32px;
+}
+
+.details .item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+    padding: 16px 0;
+}
+
+.details .item:last-child {
+    border: none;
+}
+
+.details h3,
+.details .item div:nth-child(1) {
+    font-size: 14px;
+    color: var(--secondary-color);
+    line-height: 24px;
+    letter-spacing: 1px;
+    font-weight: normal;
+}
+
+.details .item div:nth-child(2) {
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+.details h3 {
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.details .item span {
+    padding: 8px 16px;
+    background-color: var(--tertiary-color);
+    display: inline-block;
+    border-radius: 16px;
+    color: #777;
+    margin: 8px 4px 0 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+/* === ANIMATIONS === */
+
+@keyframes down {
+    from {
+        opacity: 0;
+        transform: translate(15px, 15px)
+    }
+    
+    to {
+        opacity: 1;
+    }
+}
+
+/* === FORM === */
+
+input {
+    width: 100%;
+    outline: none;
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+input[type="radio"] {
+    width: initial;
+    margin-right: 4px;
+    
+}
+
+input::placeholder {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 8px 32px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 24px;
+    border-radius: 4px;
+    background-color: var(--tertiary-color);
+}
