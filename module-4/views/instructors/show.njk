@@ -1,5 +1,11 @@
 {% extends "layout.njk" %}
 
+{% block head %}
+    <title>Instrutor
+        {{ instructor.name }}</title>
+
+{% endblock %}
+
 {% block content %}
 
     <div class="card">
@@ -11,31 +17,34 @@
 
             <div class="item">
                 <div>Instrutor</div>
-                <div>Guilherme Santos</div>
+                <div>{{ instructor.name }}</div>
             </div>
 
             <div class="item">
                 <div>Idade</div>
-                <div>32</div>
+                <div>{{ instructor.age }}</div>
             </div>
 
             <div class="item">
                 <div>Sexo</div>
-                <div>Masculino</div>
+                <div>{{ "Masculino" if instructor.gender == "M" else "Feminino" }}</div>
             </div>
 
             <div class="item">
                 <div>Acompanhamento</div>
                 <div>
-                    <span>Musculação</span>
-                    <span>Crossfit</span>
+                    {% for service in instructor.services %}
+                        <span>{{ service }}</span>
+                    {% endfor %}
                 </div>
             </div>
 
             <div class="item">
                 <div>Desde</div>
-                <div>01/01/2019</div>
+                <div>{{ instructor.created_at }}</div>
             </div>
+
+            <a href="/instructors/{{ instructor.id }}/edit" class="button">Editar</a>
 
         </section>
 

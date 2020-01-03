@@ -97,14 +97,15 @@ header {
     padding: 32px;
 }
 
+.details .item:last-child {
+    border: none;
+}
+
 .details .item {
     border-bottom: 1px solid rgba(0, 0, 0, 0.9);
     padding: 16px 0;
 }
 
-.details .item:last-child {
-    border: none;
-}
 
 .details h3,
 .details .item div:nth-child(1) {
@@ -175,12 +176,27 @@ input::placeholder {
     font-size: 16px;
 }
 
-button[type="submit"] {
+button[type="submit"],
+a.button {
     width: 100%;
     padding: 8px 32px;
+    /* box-sizing: border-box; */
     font-size: 16px;
     cursor: pointer;
     margin-top: 24px;
     border-radius: 4px;
     background-color: var(--tertiary-color);
+}
+
+a.button {
+    display: block;
+    color: #000;
+    box-sizing: border-box;
+    text-align: center;
+    
+}
+
+#form_delete button[type="submit"] {
+    background-color: lightcoral;
+    margin-top: 10px;
 }
