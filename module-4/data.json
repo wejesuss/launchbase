@@ -1,31 +1,76 @@
 {
+  "members": [
+    {
+      "id": 1,
+      "avatar_url": "https://images.unsplash.com/photo-1563685759732-3b118f9445c3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=60",
+      "name": "João",
+      "email": "joao@unsplash.com",
+      "birth": -332380800000,
+      "gender": "M",
+      "blood": "O1",
+      "weight": 89,
+      "height": 176
+    },
+    {
+      "id": 2,
+      "avatar_url": "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=60",
+      "name": "Jorge",
+      "email": "jorge@unsplash.com",
+      "birth": -332380800000,
+      "gender": "M",
+      "blood": "O1",
+      "weight": 78,
+      "height": 169
+    }
+  ],
   "instructors": [
     {
       "id": 1,
-      "avatar_url": "https://www.google.com.br",
-      "name": "aahb",
-      "birth": 1514764800000,
+      "avatar_url": "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80",
+      "name": "Caio",
+      "birth": 252460800000,
       "gender": "M",
-      "services": "jjjjjjjjjj,jjjj",
+      "services": [
+        "Crossfit",
+        "Natação",
+        "Malhação"
+      ],
       "created_at": 1577826748107
     },
     {
       "id": 2,
-      "avatar_url": "https://www.google.com.br",
-      "name": "jjjjjj",
-      "birth": 946598400000,
+      "avatar_url": "https://images.unsplash.com/photo-1543975200-8e313fb04fc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80",
+      "name": "Mayk",
+      "birth": 631065600000,
       "gender": "M",
-      "services": "2332",
+      "services": [
+        "Natação",
+        "Musculação"
+      ],
       "created_at": 1577827079358
     },
     {
       "id": 3,
-      "avatar_url": "https://www.google.com.br",
-      "name": "jjjjjj",
-      "birth": 221824656000000,
-      "gender": "M",
-      "services": "hhg,jhj,h,ghhg,",
-      "created_at": 1577989692994
+      "avatar_url": "https://images.unsplash.com/photo-1548690312-e3b507d8c110?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80",
+      "name": "Maria",
+      "birth": 510278400000,
+      "gender": "F",
+      "services": [
+        "Malhação",
+        "Musculação"
+      ],
+      "created_at": 1578069938848
+    },
+    {
+      "id": 4,
+      "avatar_url": "https://images.unsplash.com/photo-1546483875-ad9014c88eba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=674&q=80",
+      "name": "Leandra",
+      "birth": 31449600000,
+      "gender": "F",
+      "services": [
+        "Musculação"
+      ],
+      "created_at": 1578070941492
     }
   ]
 }

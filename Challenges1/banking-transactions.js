@@ -23,7 +23,7 @@ function getHigherTransactionByType(type) {
       higherTransaction = transaction
     }
   }
-  console.log(higherTransaction)
+  console.log(`Higher Transaction by ${type} is:`, higherTransaction.value)
 }
 
 function getAverageTransactionValue() {
@@ -35,7 +35,7 @@ function getAverageTransactionValue() {
     sumTransactions += transaction.value
   }
   average = sumTransactions / count
-  console.log(average)
+  console.log(`The average is:`, average)
 }
 
 function getTransactionsCount() {
@@ -54,20 +54,18 @@ function getTransactionsCount() {
 }
 
 function getLessTransactionByType(type) {
-  const typeM = type.charAt(0).toUpperCase() + type.slice(1);
-
-  let lessTransaction;
+  let transactionFiltered;
 
   for (let transaction of user.transactions) {
-    if (!lessTransaction && transaction.type === type) {
-      lessTransaction = transaction;
+    if (!transactionFiltered && transaction.type === type) {
+      transactionFiltered = transaction;
     }
 
-    if (transaction.type === type && lessTransaction.value > transaction.value) {
-      lessTransaction = transaction;
+    if (transaction.type === type && transactionFiltered.value > transaction.value) {
+      transactionFiltered = transaction;
     }
   }
-  return console.log(`Less Transaction by ${typeM}:`, lessTransaction);
+  return console.log(`Less Transaction by ${type} is:`, transactionFiltered.value);
 }
 
 createTransaction({ type: 'credit', value: 50 })
@@ -75,11 +73,10 @@ createTransaction({ type: 'credit', value: 120 })
 createTransaction({ type: 'debit', value: 80 })
 createTransaction({ type: 'debit', value: 30 })
 
-console.log(user.balance) // 60
 
 getHigherTransactionByType('credit') // { type: 'credit', value: 120 }
 getHigherTransactionByType('debit') // { type: 'debit', value: 80 }
-getLessTransactionByType('credit') // 30
+getLessTransactionByType('debit') // 30
 getAverageTransactionValue() // 70
 
 getTransactionsCount() // { credit: 2, debit: 2 }

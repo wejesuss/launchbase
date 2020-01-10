@@ -52,7 +52,6 @@ header {
 .links a.active {
     color: var(--primary-color);
     font-weight: bold;
-
 }
 
 .links a::after {
@@ -68,9 +67,7 @@ header {
 
 .links a:hover::after {
     width: 100%;
-    
     transition: all ease-in-out 300ms ;
-
 }
 
 /* === CARD === */
@@ -88,7 +85,6 @@ header {
 
     /* animation */
     animation: down 300ms ease-in;
-
 }
 
 /* === DETAILS === */
@@ -157,7 +153,7 @@ header {
 
 /* === FORM === */
 
-input {
+input, select {
     width: 100%;
     outline: none;
     font-size: 18px;
@@ -199,4 +195,85 @@ a.button {
 #form_delete button[type="submit"] {
     background-color: lightcoral;
     margin-top: 10px;
+}
+
+/* === INDEX INSTRUCTOR === */
+
+.table-container {
+    display: block;
+    box-sizing: border-box;
+    padding: 40px;
+}
+
+.table-container table {
+    border-spacing: 0;
+}
+
+th {
+    font-size: 14px;
+    color: var(--secondary-color);
+}
+
+th, td {
+    padding: 16px;
+    border-bottom: 1px solid #f5d34b;
+
+}
+
+thead tr th {
+    text-align: left;
+    text-transform: uppercase;
+}
+
+tbody tr td:first-child  {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    align-content: center;
+    min-height: 82px;
+    height: -webkit-fill-available;
+}
+
+tbody tr td:first-child span {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 1px solid var(--tertiary-color);
+    box-shadow: black 4px 4px 5px -4px;
+}
+
+.table-container > a {
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.table-container thead tr th:last-child,
+.table-container tbody tr td:last-child {
+    text-align: center;
+}
+
+.table-container tbody tr td:last-child a,
+.table-container > a {
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 4px;
+    color: white;
+    text-transform: uppercase;
+    background-color: var(--primary-color);
+}
+
+.table-container tbody tr:last-child td {
+    border: none;
+}
+
+.table-container tbody tr td:nth-child(2) span {
+    padding: 8px 16px;
+    background-color: var(--tertiary-color);
+    display: inline-block;
+    border-radius: 16px;
+    color: #777;
+    margin: 8px 4px 0 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
 }

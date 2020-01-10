@@ -2,43 +2,38 @@
 
 {% block content %}
 
-    <div class="card">
+<div class="card table-container">
+<a href="/instructors/create">Novo</a>
+    <table width=100%>
+        <thead>
+            <tr>
+                <th>Instrutor</th>
+                <th>Atendimento</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instructor in instructors %}
+            <tr>
+                <td>
+                <span style="background : url({{ instructor.avatar_url }}) no-repeat center center / cover"></span>
+                {{ instructor.name }}
+                </td>
+                
+                <td>
+                {% for services in instructor.services %}
+                    <span>
+                        {{ services }}
+                    </span>
+                {% endfor %}
+                </td>
 
-        <section class="avatar" style="background: url(https://source.unsplash.com/collection/8353395/900x900) no-repeat center center / cover"></section>
+                <td><a href="/instructors/{{ instructor.id }}">ver</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        <section class="details">
-            <h3>Detalhes</h3>
-
-            <div class="item">
-                <div>Instrutor</div>
-                <div>Guilherme Santos</div>
-            </div>
-
-            <div class="item">
-                <div>Idade</div>
-                <div>32</div>
-            </div>
-
-            <div class="item">
-                <div>Sexo</div>
-                <div>Masculino</div>
-            </div>
-
-            <div class="item">
-                <div>Acompanhamento</div>
-                <div>
-                    <span>Musculação</span>
-                    <span>Crossfit</span>
-                </div>
-            </div>
-
-            <div class="item">
-                <div>Desde</div>
-                <div>01/01/2019</div>
-            </div>
-
-        </section>
-
-    </div>
+</div>
 
 {% endblock content %}
