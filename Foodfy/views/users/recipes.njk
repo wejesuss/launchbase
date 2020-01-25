@@ -2,18 +2,9 @@
 
 {% block head %}
     <title>Receitas</title>
-    <style>
-    .menus #recipes {
-    font-weight: bold;
-    }
-    </style>
 {% endblock head %}
-
-    {% block header %}
     
-    {% endblock header %}
-    
-    {% block content %}
+{% block content %}
     <main>
         <div class="recipes">
         {% for recipe in recipes %}

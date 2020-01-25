@@ -1,0 +1,54 @@
+{% extends 'model.njk' %}
+
+{% block content %}
+<div class="recipe">
+    <div class="recipe-dashboard delete">
+        <form action="/admin/recipes?_method=DELETE" method="post" class="recipe-controller">
+            <input type="hidden" name="id" value="{{recipe.id}}">
+            <button class="delete-button" type="submit">Deletar receita</button>
+        </form>
+    </div>
+    <form action="/admin/recipes?_method=PUT" method="post">
+        <div class="recipe-dashboard">
+            <h4>Editando receita</h4>
+            <button type="submit">Salvar receita</button>
+        </div>
+        {% include './recipeModel.njk' %}
+        <input type="hidden" name="id" value="{{recipe.id}}">
+
+        <div class="item">
+            <div>Ingredientes</div>
+            <div id="ingredients">
+                {% for ingredients in recipe.ingredients %}
+                    <div class="ingredient">
+                        <input type="text" name="ingredients[]" value="{{ingredients}}" placeholder="Ingredient"/>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="add-ingredient">Adicionar novo ingrediente</button>
+        </div>
+
+        <div class="item">
+            <div>Modo de preparo</div>
+            <div id="preparation">
+                {% for preparation in recipe.preparation %}
+                    <div class="preparation">
+                        <input type="text" name="preparation[]" value="{{preparation}}" placeholder="Preparation"/>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="add-preparation">Adicionar novo passo</button>
+        </div>
+
+        <div class="item">
+            <div>Informações adicionais</div>
+            <textarea name="information" placeholder="Informações adicionais" wrap="hard">{{ recipe.information }}</textarea>
+        </div>
+
+    </form>
+</div>
+
+<script src="/addNewField.js"></script>
+
+
+{% endblock content %}

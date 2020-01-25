@@ -1,0 +1,27 @@
+{% extends 'model.njk' %}
+    
+{% block head %}
+    <title>Listagem</title>
+{% endblock head %}
+
+{% block content %}
+    
+    <section id="box">
+    <h3>Gerenciar receitas</h3>
+    <div class="recipes">
+        {% for recipe in recipes %}
+            <div class="recipe">
+                <div class="logo-image">
+                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+                </div>
+                <div class="details">
+                    <h4 class="title">{{ recipe.title }}</h4>
+                    <p class="author">{{ recipe.author }}</p>
+                    <a href="/admin/recipes/{{ recipe.id }}" class="view">Visualizar</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </section>
+
+{% endblock content %}

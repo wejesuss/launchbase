@@ -1,0 +1,42 @@
+{% extends 'model.njk' %}
+
+{% block content %}
+<div class="recipe">
+    <form action="/admin/recipes" method="POST">
+        <div class="recipe-dashboard">
+            <h4>Criando receita</h4>
+            <button type="submit">Salvar receita</button>
+        </div>
+
+        {% include './recipeModel.njk' %}
+
+        <div class="item">
+            <div>Ingredientes</div>
+            <div id="ingredients">
+                <div class="ingredient">
+                    <input type="text" name="ingredients[]" value="{{ingredients}}" placeholder="Ingredient"/>
+                </div>
+            </div>
+            <button type="button" class="add-ingredient">Adicionar novo ingrediente</button>
+        </div>
+
+        <div class="item">
+            <div>Modo de preparo</div>
+            <div id="preparation">
+                <div class="preparation">
+                    <input type="text" name="preparation[]" value="{{preparation}}" placeholder="Preparation"/>
+                </div>
+            </div>
+            <button type="button" class="add-preparation">Adicionar novo passo</button>
+        </div>
+
+        <div class="item">
+            <div>Informações adicionais</div>
+            <textarea name="information" placeholder="Informações adicionais" wrap="hard">{{ recipe.information }}</textarea>
+        </div>
+    </form>
+</div>
+
+<script src="/addNewField.js"></script>
+
+{% endblock content %}

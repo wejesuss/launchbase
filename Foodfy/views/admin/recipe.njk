@@ -1,4 +1,4 @@
-{% extends "layout.njk" %}
+{% extends "model.njk" %}
 
 {% block head %}
     <title>Receita de {{recipe.title}}</title>
@@ -6,7 +6,11 @@
 
 {% block content %}
 <div class="recipe">
-
+        <div class="recipe-dashboard">
+            <h4>Receita: {{ recipe.title }}</h4>
+            <a href="/admin/recipes/{{recipe.id}}/edit"><button>Editar receita</button></a>
+        </div>
+        
         <div class="recipe-header">
             <img src="{{recipe.image}}" alt="{{recipe.title}}">
             <h2>{{recipe.title}}</h2>
@@ -20,7 +24,7 @@
                 <h3>Ingredientes</h3>
                 <h4>ESCONDER</h4>
             </div>
-                <div class="topic-content">
+                <div id="dash-list" class="topic-content">
                     <ul>
                         {% for ingredient in recipe.ingredients %}
                             <li>{{ingredient}}</li>
@@ -36,7 +40,7 @@
                 <h3>Modo de preparo</h3>
                 <h4>MOSTRAR</h4>
             </div>
-                <div class="topic-content hidden">
+                <div id="dash-list" class="topic-content hidden">
                     <ul>
                         {% for preparation in recipe.preparation %}
                             <li>{{preparation}}</li>

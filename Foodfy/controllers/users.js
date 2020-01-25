@@ -1,4 +1,4 @@
-const recipes = require('../data.json').recipes
+const data = require('../data.json')
 
 exports.index = function(req, res) {
     const home = {
@@ -7,31 +7,20 @@ exports.index = function(req, res) {
         chef_url:'/images/layouts/assets/chef.png'        
     }
 
-    const recipesFiltered = []
-    for (let i = 0; i < 6; i++) {
-        const obj = recipes[i]
-        obj.id = i
-        recipesFiltered.push(obj)
-    }
+    const recipesFiltered = data.recipes.filter((recipe, index) => {
+        if (index < 6) return recipe
+    })
 
     return res.render("users/home", {home, recipes : recipesFiltered})
 }
 
 exports.recipes = function(req, res) {
-    const recipesAddedId = []
-    
-    for (let i=0; i < recipes.length; i++) {
-        const obj = recipes[i]
-        obj.id = i
-        recipesAddedId.push(obj)
-    }
-    
-    return res.render("users/recipes", {recipes : recipesAddedId})
+    return res.render("users/recipes", {recipes : data.recipes})
 }
 
 exports.recipe = function(req, res) {
     const {index: recipeIndex} = req.params
-    const recipe = recipes[recipeIndex]
+    const recipe = data.recipes[recipeIndex]
     
     if(!recipe) {
         return res.send("Recipe not found!")
