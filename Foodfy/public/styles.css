@@ -401,10 +401,11 @@ button#button-delete {
     line-height: 19px;
 }
 
-.item input {
+.item input, .item textarea {
     width: 100%;
     outline: none;
     height: 5vh;
+    padding: 15px 20px;
     box-sizing: border-box;
     margin: 10px 0 0;
     background: #FFFFFF;
@@ -416,10 +417,9 @@ button#button-delete {
 
 .item textarea {
     height: 25vh;
-    width: 100%;
-    text-align: left;
     font-size: 24px;
-    margin-bottom: 10px;
+    resize: none;
+    margin-bottom: 20px;
 }
 
 .item #preparation, .item #ingredients {
