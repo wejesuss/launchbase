@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+body{
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background-color: #716bb1;
+    font-family: 'Roboto', sans-serif;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    background-color: #7159c1;
+    width: 100%;
+}
+.header {
+    text-align: center;
+    padding: 30px;
+}
+.header a {
+    text-decoration: none;
+    font-size: 20px;
+    margin-right: 30px;
+    color: #7159c1;
+    filter: brightness(0.2);
+}
+
+main {
+    min-height: 75vh;
+}
+
+.name {
+    margin-top: 100px;
+    text-align: center; 
+}
+
+.name a {
+    font-size: 32px;
+    color: white;
+    text-decoration: none;
+}
+
+.logo {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.logo img{
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 1px solid #af21b9;
+}
+
+.logo img:hover {
+    border: 1px solid #7159c1;
+    width: 405px;
+    height: 405px;
+}
+
+.info {
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.info ul {
+    list-style-type: none;
+    color: white;
+    font-size: 18px;
+    line-height: 28px;
+    padding-left: 0;
+}
+
+footer {
+    height: 50px;
+    width: 100%;
+}
+
+footer .footer {
+    height: 100%;
+    text-align: center;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #7159c1;
+    filter: brightness(0.5);
+}
+
+.footer a:hover {
+    border-bottom: #fff 1px solid;
+    color: black;
+    filter:  brightness(1);
+    transition: all ease-in-out .2s;
+}
+
+.cursos {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    margin: 30px 0;
+}
+
+
+@keyframes up {
+    from {
+        transform: translateX(50px);
+    }
+
+    to {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes show {
+    from {
+        display: none;
+        visibility: hidden;
+    }
+
+    to {
+        display: flex;
+        visibility: visible;
+    }
+}
+
+.curso {
+    background-color: rgba(0, 0, 0, 0.705);
+    color: white;
+    width: 300px;
+    border-radius: 5px;
+    border: 1px solid rgb(36, 3, 75);
+    box-shadow: rgb(0, 0, 0) 7px 5px 10px -3px;
+    height: 70vh;
+    box-sizing: border-box;
+    animation: up 1s forwards cubic-bezier(0, -1.23, 0.02, 1.23);
+}
+
+
+.logo-curso {
+    width: 300px;
+    height: 147px;
+    animation: show .5s backwards cubic-bezier(0, -1.23, 0.02, 1.23) 1s;
+}
+
+.logo-curso, .name-curso,
+.info-curso, .price {
+    margin: 16px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.curso .name-curso {
+    font-size: 32px;
+    color: #7159c1;
+    font-weight: bold;
+    font-style: oblique;
+    animation: show .5s backwards cubic-bezier(0, -1.23, 0.02, 1.23) 1.5s;
+}
+
+.info-curso {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.info-curso div:first-of-type {
+    animation: show .5s backwards cubic-bezier(0, -1.23, 0.02, 1.23) 2s;
+}
+
+.info-curso .qtde-modulos {
+    background: #ff4 center;
+    border-radius: 50%;
+    width: 35px;
+    margin-left: 10px;
+    height: 20px;
+    text-align: center;
+    color: black;
+    animation: show .5s backwards cubic-bezier(0, -1.23, 0.02, 1.23) 2.5s;
+}
+
+.price {
+    animation: show .5s backwards cubic-bezier(0, -1.23, 0.02, 1.23) 3s;
+}
+
+.modalOverlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    display: none;
+    visibility: hidden;
+    z-index: 2;
+}
+
+.modalOverlay.maximize {
+    visibility: visible;
+    display: block;
+}
+
+.modalOverlay .modal {
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    margin: 30px auto;
+    border-radius: 8px;
+    position: relative;
+}
+
+.modal iframe {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 95%;
+}
+
+.modal .close-modal {
+    background-color: #7159c1;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+    right: 0;
+}
