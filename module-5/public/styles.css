@@ -176,7 +176,6 @@ button[type="submit"],
 a.button {
     width: 100%;
     padding: 8px 32px;
-    /* box-sizing: border-box; */
     font-size: 16px;
     cursor: pointer;
     margin-top: 24px;
@@ -273,8 +272,84 @@ tbody tr td:first-child span {
     display: inline-block;
     border-radius: 16px;
     color: #777;
-    margin: 8px 4px 0 0;
+    margin: 0 4px 0 0;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 12px;
+}
+
+.table-container .header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.table-container .header a {
+    width: 120px;
+    color: white;
+    margin: 0;
+    background-color: var(--primary-color);
+}
+
+.table-container .header form {
+    display: grid;
+    grid-gap: 8px;
+    grid-template-columns: 1fr 120px;
+    align-items: center;
+}
+
+.header form input {
+    border: 1px solid #eee;
+    padding: 4px 8px;
+    box-sizing: border-box;
+}
+
+.table-container .header form button {
+    margin: 0;
+    color: white;
+    background-color: var(--primary-color);
+}
+
+.table-container {
+    display: grid;
+    grid-template: 64px 1fr 16px / 1fr;
+}
+
+.table-container .header {
+    margin: 0;
+    align-self: start;
+}
+
+.table-container .pagination {
+    margin: 0;
+    align-self: end;
+    justify-self: center;
+}
+
+.pagination a,
+.pagination span {
+    color: var(--primary-color);
+    margin-right: 16px;
+}
+
+.pagination a:hover {
+    filter: brightness(0.3);
+    font-size: 17px;
+}
+
+.pagination a::after {
+    content: "";
+    width: 0;
+    height: 1px;
+    background-color: var(--primary-color);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -10%;
+}
+
+.pagination a:hover::after {
+    width: 100%;
+    transition: all ease-in-out 300ms ;
 }

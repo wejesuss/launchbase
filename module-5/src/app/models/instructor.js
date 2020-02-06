@@ -14,6 +14,7 @@ module.exports = {
             callback(results.rows)
         })
     },
+    
     create(data, callback) {
         const query = `
             INSERT INTO instructors (
@@ -41,6 +42,7 @@ module.exports = {
             callback(results.rows[0])
         })
     },
+    
     find(id, callback) {
         db.query(`
             SELECT * 
@@ -52,6 +54,7 @@ module.exports = {
             callback(results.rows[0])
         })
     },
+    
     update(data, callback) {
         const query = `
         UPDATE instructors SET
@@ -73,17 +76,52 @@ module.exports = {
         ]
 
         db.query(query, values, function (err, results) {
-            if (err) throw `Instructor not found! ${err}`
+            if (err) throw `Database error! ${err}`
 
             callback()
         })
 
     },
+    
     delete(id, callback) {
         db.query(`DELETE  FROM instructors WHERE id = $1`, [id], function (err, results) {
             if (err) throw `Database error! ${err}`
 
             callback()
+        })
+    },
+    
+    paginate(params) {
+        const { filter, limit, offset, callback } = params
+
+        let query = "",
+            filterQuery = "",
+            totalQuery = `(
+                SELECT count(*) FROM instructors
+            ) AS total`
+
+        if(filter) {
+            filterQuery = `
+            WHERE instructors.name ILIKE '%${filter}%'
+            OR instructors.services ILIKE '%${filter}%'
+            `
+            totalQuery = `(
+                SELECT count(*) FROM instructors
+                ${filterQuery}
+            ) AS total`
+        }
+
+        query = `SELECT instructors.*, ${totalQuery}, count(members) AS total_students
+        FROM instructors
+        LEFT JOIN members ON (instructors.id = members.instructor_id)
+        ${filterQuery}
+        GROUP BY instructors.id ORDER BY total_students DESC LIMIT $1 OFFSET $2
+        `
+        
+        db.query(query, [limit, offset], function(err, results) {
+            if(err) throw `Database error! ${err}`
+
+            callback(results.rows)
         })
     }
 }

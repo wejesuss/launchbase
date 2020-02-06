@@ -3,14 +3,35 @@ const { age, date } = require("../../lib/utils")
 
 module.exports = {
     index(req, res) {
-        Instructor.all(function (instructors) {
-            for (const instructor in instructors) {
-                instructors[instructor].services = instructors[instructor].services.split(',')
+        let { filter, page, limit } = req.query
+
+        page = page || 1
+        limit = limit || 2
+
+        let offset = limit * (page - 1)
+
+        const params = {
+            filter,
+            limit,
+            offset,
+            callback(instructors) {
+                for (const instructor in instructors) {
+                    instructors[instructor].services = instructors[instructor].services.split(',')
+                }
+
+                let pagination
+                if(instructors[0]) {
+                     pagination = {
+                        total: Math.ceil(instructors[0].total / limit),
+                        page
+                    }
+                }
+                
+                return res.render("instructors/index", { instructors, filter, pagination })
             }
+        }
 
-            return res.render("instructors/index", { instructors })
-        })
-
+        Instructor.paginate(params)
     },
 
     create(req, res) {

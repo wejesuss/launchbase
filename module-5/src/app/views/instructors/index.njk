@@ -3,8 +3,17 @@
 {% block content %}
 
 <div class="card table-container">
-<a href="/instructors/create">Novo</a>
-    <table width=100%>
+    <div class="header">
+        <a class="button" href="/instructors/create">Novo</a>
+        <form action="/instructors" method="get">
+        <input type="text" name="filter"
+        placeholder="Nome ou atendimento"
+        value="{{filter}}"
+        >
+        <button type="submit">Filtrar</button>
+        </form>
+    </div>
+    <table width="100%">
         <thead>
             <tr>
                 <th>Instrutor</th>
@@ -15,28 +24,35 @@
         </thead>
         <tbody>
             {% for instructor in instructors %}
-            <tr>
-                <td>
-                <span style="background : url({{ instructor.avatar_url }}) no-repeat center center / cover"></span>
-                {{ instructor.name }}
-                </td>
-                
-                <td>
-                    {% for service in instructor.services %}
-                        <span>
-                            {{ service }}
-                        </span>
-                    {% endfor %}
-                </td>
+                <tr>
+                    <td>
+                        <span style="background : url({{ instructor.avatar_url }}) no-repeat center center / cover"></span>
+                        {{ instructor.name }}
+                    </td>
 
-                <td>{{instructor.total_students}}</td>
+                    <td>
+                        {% for service in instructor.services %}
+                            <span>
+                                {{ service }}
+                            </span>
+                        {% endfor %}
+                    </td>
 
-                <td><a href="/instructors/{{ instructor.id }}">ver</a></td>
-            </tr>
+                    <td>{{instructor.total_students}}</td>
+
+                    <td>
+                        <a href="/instructors/{{ instructor.id }}">ver</a>
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    <div class="pagination"
+        data-total={{pagination.total}}
+        data-page={{pagination.page}}
+        data-filter={{filter}}
+    ></div>
+    
 </div>
-
 {% endblock content %}
