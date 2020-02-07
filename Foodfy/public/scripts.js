@@ -1,3 +1,14 @@
+// change recipe
+const receitas = document.querySelectorAll(".recipes .card")
+
+for (let i = 0; i < receitas.length; i++) {
+    receitas[i].querySelector('img').addEventListener("click", function() {
+        window.location.href = `/recipes/${i}`
+    })
+}
+
+// show/hide
+
 const showHides = document.getElementsByClassName('topic');
 
 for (let showHide of showHides) {
@@ -30,8 +41,10 @@ for (const items of menuItems) {
 
 const formDelete = document.querySelector('.recipe-controller');
 
-formDelete.addEventListener("submit", e => {
-    const confirmation = confirm("Deseja mesmo deletar?");
-    
-    if (!confirmation) e.preventDefault();
-})
+if(formDelete) {
+    formDelete.addEventListener("submit", e => {
+        const confirmation = confirm("Deseja mesmo deletar?");
+        
+        if (!confirmation) e.preventDefault();
+    })
+}
