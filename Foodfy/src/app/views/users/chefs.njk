@@ -1,0 +1,17 @@
+{% extends 'layout.njk' %}
+
+{% block content %}
+    <main class="chefs">
+        {% for chef in chefs %}
+            <div class="chef">
+                <div class="chef-avatar">
+                    <img src="{{chef.avatar_url}}" alt="{{chef.name}}">
+                </div>
+                <div class="chef-info">
+                    <h5>{{chef.name}}</h5>
+                    <p>3 receitas</p>
+                </div>
+            </div>
+        {% endfor %}
+    </main>
+{% endblock content %}

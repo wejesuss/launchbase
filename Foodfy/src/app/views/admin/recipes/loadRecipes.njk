@@ -1,13 +1,4 @@
-{% extends 'model.njk' %}
-    
-{% block head %}
-    <title>Listagem</title>
-{% endblock head %}
-
-{% block content %}
-    
-    <section id="box">
-    <h3>Gerenciar receitas</h3>
+{% macro loadRecipes(recipes) %}
     <div class="recipes">
         {% for recipe in recipes %}
             <div class="recipe">
@@ -22,6 +13,4 @@
             </div>
         {% endfor %}
     </div>
-    </section>
-
-{% endblock content %}
+{% endmacro %}

@@ -1,0 +1,14 @@
+{% extends 'model.njk' %}
+
+{% block head %}
+    <title>Listagem</title>
+{% endblock head %}
+
+{% block content %}
+    <section id="box">
+        <h3>Gerenciar receitas</h3>
+        {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
+        {{ loadRecipes(recipes) }}
+    </section>
+
+{% endblock content %}

@@ -1,9 +1,17 @@
+// add search field
+const search = document.querySelector('.menus .search')
+if(search) {
+    if (location.pathname.includes('/chefs') || location.pathname.includes('/about')) {
+        search.removeChild(search.querySelector('form'))
+    }
+}
+
 // change recipe
 const receitas = document.querySelectorAll(".recipes .card")
 
 for (let i = 0; i < receitas.length; i++) {
     receitas[i].querySelector('img').addEventListener("click", function() {
-        window.location.href = `/recipes/${i}`
+        window.location.href = `/recipes/${i+1}`
     })
 }
 
@@ -29,7 +37,7 @@ for (let showHide of showHides) {
 
 // Add Bold
 
-const menuItems = document.querySelectorAll('header .menus a');
+const menuItems = document.querySelectorAll('.menus a');
 const currentPage = window.location.pathname
 for (const items of menuItems) {
     if (currentPage.includes(items.getAttribute('href'))) {

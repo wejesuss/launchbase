@@ -6,6 +6,9 @@
     
 {% block content %}
     <main>
+        {% if filter %}
+            <h3>Procurando por "{{filter}}"</h3>
+        {% endif %}
         <div class="recipes">
         {% for recipe in recipes %}
             <div class="card">

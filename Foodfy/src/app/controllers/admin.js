@@ -1,13 +1,14 @@
 const fs = require('fs')
-const data = require('../data.json')
-const { verifyFieldsOfArray } = require('../utils/verifyFields')
+const data = require('../../../data.json')
+const { verifyFieldsOfArray } = require('../../utils/utils')
 
 exports.index = function (req, res) {
-    return res.render("admin/recipes", { recipes: data.recipes });
+    const path = '/admin'
+    return res.render("admin/recipes/index", { recipes: data.recipes, path });
 }
 
 exports.create = function (req, res) {
-    return res.render("admin/create");
+    return res.render("admin/recipes/create");
 }
 
 exports.post = function (req, res) {
@@ -68,7 +69,7 @@ exports.show = function (req, res) {
         return res.send("Recipe not found!");
     }
 
-    return res.render("admin/recipe", { recipe });
+    return res.render("admin/recipes/recipe", { recipe });
 }
 
 exports.edit = function (req, res) {
@@ -79,7 +80,7 @@ exports.edit = function (req, res) {
         return res.send("Recipe not found!");
     }
 
-    return res.render('admin/edit', { recipe });
+    return res.render('admin/recipes/edit', { recipe });
 }
 
 exports.put = function (req, res) {
