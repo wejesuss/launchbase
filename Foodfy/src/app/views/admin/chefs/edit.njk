@@ -1,0 +1,27 @@
+{% extends 'model.njk' %}
+
+{% block head %}
+    <title>Editando chef</title>
+{% endblock head %}
+
+{% block content %}
+<main>
+    <div class="chef-dashboard">
+        <h4>Editando chef</h4>
+        <div class="chef-controller">
+            <form action="/admin/chefs?_method=DELETE" method="post" class="delete-form">
+                <input type="hidden" name="id" value="{{chef.id}}">
+                <button id="button-delete" type="submit">Deletar</button>
+            </form>
+            
+            <button form="save_chef" type="submit">Salvar chef</button>
+        </div>
+    </div>
+
+    <form action="/admin/chefs?_method=PUT" method="post" id="save_chef">
+        {% include './chefModel.njk' %}
+        
+        <input type="hidden" name="id" value="{{chef.id}}">
+    </form>
+</main>
+{% endblock content %}

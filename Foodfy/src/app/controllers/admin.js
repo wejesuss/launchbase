@@ -2,16 +2,16 @@ const fs = require('fs')
 const data = require('../../../data.json')
 const { verifyFieldsOfArray } = require('../../utils/utils')
 
-exports.index = function (req, res) {
+exports.index = function(req, res) {
     const path = '/admin'
     return res.render("admin/recipes/index", { recipes: data.recipes, path });
 }
 
-exports.create = function (req, res) {
+exports.create = function(req, res) {
     return res.render("admin/recipes/create");
 }
 
-exports.post = function (req, res) {
+exports.post = function(req, res) {
     const keys = Object.keys(req.body);
     
     for (const key of keys) {
@@ -61,7 +61,7 @@ exports.post = function (req, res) {
     });
 }
 
-exports.show = function (req, res) {
+exports.show = function(req, res) {
     const { id } = req.params
     const recipe = data.recipes[id]
 
@@ -72,7 +72,7 @@ exports.show = function (req, res) {
     return res.render("admin/recipes/recipe", { recipe });
 }
 
-exports.edit = function (req, res) {
+exports.edit = function(req, res) {
     const { id } = req.params
     const recipe = data.recipes[id]
 
@@ -83,8 +83,18 @@ exports.edit = function (req, res) {
     return res.render('admin/recipes/edit', { recipe });
 }
 
-exports.put = function (req, res) {
+exports.put = function(req, res) {
     const { id, ingredients, preparation } = req.body
+    
+    const keys = Object.keys(req.body);
+    
+    for (const key of keys) {
+        if (!req.body[key]) {
+            if (key != "information") {
+                return res.send("Please, fill in all fields!");
+            }
+        }
+    }
     
     const emptyIngredient = verifyFieldsOfArray(ingredients);
     const emptyPreparation = verifyFieldsOfArray(preparation);
@@ -117,7 +127,7 @@ exports.put = function (req, res) {
     });
 }
 
-exports.delete = function (req, res) {
+exports.delete = function(req, res) {
     const { id } = req.body
     
     const recipesFound = data.recipes.find(recipe => recipe.id == id);

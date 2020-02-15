@@ -135,7 +135,6 @@ main div.recipes {
 .card img {
     width: 100%;
     border-radius: 15px;
-    cursor: pointer;
     height: 140px;
 }
 
@@ -392,6 +391,10 @@ div.details {
     margin-top: 50px;
 }
 
+.chef-controller, .recipe-controller {
+    display: flex;
+}
+
 .recipe-dashboard h4,
 .chef-dashboard h4 {
     font-size: 24px;
@@ -412,7 +415,11 @@ button {
 
 button#button-delete {
     background: #DC4747;
-    margin-right: 5px;
+    margin-right: 10px;
+}
+
+button[type="submit"] {
+    font-weight: bold;
 }
 
 /* === CREATE RECIPE === */
@@ -453,19 +460,6 @@ button#button-delete {
     margin: 0 0 15px;
 }
 
-.recipe-dashboard.delete {
-    margin-top: 0px;
-    max-width: 940px;
-    position: relative;
-}
-
-.recipe-dashboard.delete .recipe-controller {
-    display: flex;
-    right: 150px;
-    top: 50px;
-    position: absolute;
-}
-
 .add-ingredient, .add-preparation {
     background: none;
     font-size: 16px;
@@ -490,9 +484,7 @@ button#button-delete {
 }
 
 .chef {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    grid-gap: 20px;
+    display: flex;
     align-items: center;
     position: relative;
 }
