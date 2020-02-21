@@ -1,7 +1,7 @@
 {% extends 'layout.njk' %}
 
 {% block content %}
-    <main class="chefs">
+    <main class="chefs" style="min-height: 80vh;">
         {% for chef in chefs %}
             <div class="chef">
                 <div class="chef-avatar">
@@ -9,7 +9,15 @@
                 </div>
                 <div class="chef-info">
                     <h5>{{chef.name}}</h5>
-                    <p>3 receitas</p>
+                    {% if chef.total_recipes > 1 %}
+                        <p>{{chef.total_recipes}} receitas</p>
+                    {% else %}
+                        {% if chef.total_recipes == 0 %}
+                            <p>Sem receitas</p>
+                        {% else %}
+                            <p>{{chef.total_recipes}} receita</p>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

@@ -1,29 +1,29 @@
 const express = require('express')
 const routes = express.Router()
+const users = require("./app/controllers/users")
 const recipes = require("./app/controllers/recipes")
-const admin = require("./app/controllers/admin")
 const chefs = require("./app/controllers/chefs")
 
 // recipes
-routes.get('/', recipes.index)
+routes.get('/', users.index)
 routes.get('/about', function(req, res) {
     return res.render('users/about')
 })
-routes.get('/recipes', recipes.list)
-routes.get('/recipes/:index', recipes.show)
+routes.get('/recipes', users.list)
+routes.get('/recipes/:index', users.show)
 
 routes.get('/chefs', chefs.index)
 
 // admin
 routes.get('/admin', (req, res) => res.redirect('/admin/recipes'))
-routes.get('/admin/recipes', admin.index)
-routes.get('/admin/recipes/create', admin.create)
-routes.get('/admin/recipes/:id', admin.show)
-routes.get('/admin/recipes/:id/edit', admin.edit)
+routes.get('/admin/recipes', recipes.index)
+routes.get('/admin/recipes/create', recipes.create)
+routes.get('/admin/recipes/:id', recipes.show)
+routes.get('/admin/recipes/:id/edit', recipes.edit)
 
-routes.post('/admin/recipes', admin.post)
-routes.put('/admin/recipes', admin.put)
-routes.delete('/admin/recipes', admin.delete)
+routes.post('/admin/recipes', recipes.post)
+routes.put('/admin/recipes', recipes.put)
+routes.delete('/admin/recipes', recipes.delete)
 
 routes.get('/admin/chefs', chefs.index)
 routes.get('/admin/chefs/create', chefs.create)

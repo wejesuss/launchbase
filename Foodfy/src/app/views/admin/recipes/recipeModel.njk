@@ -4,8 +4,22 @@
 </div>
 
 <div class="item">
-    <div>Nome do autor</div>
-    <input type="text" name="author" value="{{ recipe.author }}">
+    <div>Nome do chef</div>
+    <select name="chef_id">
+        <option value="">Selecione um Chef...</option>
+        {% for chef in chefs %}
+            <option 
+            {% if recipe.chef_id %}
+                {% if recipe.chef_id == chef.id %}
+                    selected
+                {% endif %} 
+            {% endif %}
+            value="{{chef.id}}"
+            >
+                {{chef.name}}
+            </option>
+        {% endfor %}
+    </select>
 </div>
 
 <div class="item">
@@ -51,5 +65,5 @@
 
 <div class="item">
     <div>Informações adicionais</div>
-    <textarea name="information" placeholder="Informações adicionais" wrap="hard">{{ recipe.information }}</textarea>
+    <textarea name="information" placeholder="Informações adicionais">{{ recipe.information }}</textarea>
 </div>

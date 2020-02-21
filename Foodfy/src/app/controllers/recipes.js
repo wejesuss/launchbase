@@ -1,42 +1,108 @@
 const Recipes = require('../models/recipes')
+const { verifyFieldsOfArray } = require('../../utils/utils')
 
 exports.index = function(req, res) {
-    const home = {
-        title:"As melhores receitas",
-        presentation:"Aprenda a construir os melhores pratos com receitas criadas por profissionais do mundo inteiro.",
-        chef_url:'/images/layouts/assets/chef.png'        
-    }
+    Recipes.all(function(recipes) {
+        return res.render("admin/recipes/index", {recipes});
+    })
+}
 
-    const params = {
-        limit : 6,
-        callback(recipes) {
-            return res.render("users/home", {home, recipes})
+exports.create = function(req, res) {
+    Recipes.recipeSelectOptions(function(options) {
+        if(!options) return res.send("Chefs not found!")
+
+        return res.render('admin/recipes/create', {chefs: options})
+    })
+}
+
+exports.post = function(req, res) {
+    const keys = Object.keys(req.body);
+    
+    for (const key of keys) {
+        if (!req.body[key]) {
+            if (key != "information") {
+                return res.send("Please, fill in all fields!");
+            }
         }
     }
 
-    Recipes.findByLimit(params)
-}
+    const emptyIngredient = verifyFieldsOfArray(req.body.ingredients);
+    const emptyPreparation = verifyFieldsOfArray(req.body.preparation);
 
-exports.list = function(req, res) {
-    const { filter } = req.query
+    if (emptyIngredient || emptyPreparation) {
+        return res.send("Please, fill in all fields!");
+    }
 
-    Recipes.all(function(recipes) {
-        return res.render("users/recipes", {recipes, filter})
+    Recipes.create(req.body, function(recipe) {
+        return res.redirect(`/admin/recipes/${recipe.id}`)
     })
 }
 
 exports.show = function(req, res) {
-    const {index: id} = req.params
+    const { id } = req.params
+
     const params = {
         id,
         callback(recipe) {
-            if(!recipe) {
-                return res.send("Recipe not found!")
+            if (!recipe) {
+                return res.send("Recipe not found!");
             }
 
-            return res.render("users/recipe", {recipe})
+            return res.render("admin/recipes/recipe", {recipe});
         }
     }
 
     Recipes.find(params)
+}
+
+exports.edit = function(req, res) {
+    const { id } = req.params
+    const params = {
+        id,
+        callback(recipe) {
+            if (!recipe) {
+                return res.send("Recipe not found!");
+            }
+
+            Recipes.recipeSelectOptions(function(options) {
+                return res.render('admin/recipes/edit', { recipe, chefs: options });
+            })
+        }
+    }
+
+    Recipes.find(params)
+
+}
+
+exports.put = function(req, res) {
+    const { id, ingredients, preparation } = req.body
+    
+    const keys = Object.keys(req.body);
+    
+    for (const key of keys) {
+        if (!req.body[key]) {
+            if (key != "information") {
+                return res.send("Please, fill in all fields!");
+            }
+        }
+    }
+    
+    const emptyIngredient = verifyFieldsOfArray(ingredients);
+    const emptyPreparation = verifyFieldsOfArray(preparation);
+
+    if (emptyIngredient || emptyPreparation) {
+        return res.send("Please, fill in all fields!");
+    }
+
+    Recipes.update(req.body, function() {
+        return res.redirect(`/admin/recipes/${id}`)
+    })
+}
+
+exports.delete = function(req, res) {
+    const { id } = req.body
+    
+    Recipes.delete(id, function() {
+        return res.redirect('/admin/recipes')        
+    })
 }

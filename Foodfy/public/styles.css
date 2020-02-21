@@ -91,7 +91,7 @@ header {
 main {
     width: 940px;
     margin: 50px auto;
-    min-height: 80vh;
+    min-height: 40vh;
 }
 
 main section h2 {
@@ -160,8 +160,8 @@ footer {
     font-size: 14px;
     color: #999999;
     text-align: center;
+    margin-top: auto;
     width: 100%;
-    bottom: 0;
 }
 
 /* === PAGE RECIPE === */
@@ -435,7 +435,7 @@ button[type="submit"] {
     line-height: 19px;
 }
 
-.item input, .item textarea {
+.item input, .item textarea, .item select {
     width: 100%;
     outline: none;
     height: 5vh;
@@ -447,6 +447,10 @@ button[type="submit"] {
     border-radius: 4px;
     font-size: 16px;
     color: var(--secondary-color);
+}
+
+.item select, select {
+    padding: 5px 15px;
 }
 
 .item textarea {
@@ -515,7 +519,7 @@ button[type="submit"] {
 }
 
 .chef-info h5 {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-weight: normal;
     text-transform: capitalize;
     font-size: 18px;

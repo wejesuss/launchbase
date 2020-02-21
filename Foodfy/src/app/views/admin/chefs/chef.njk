@@ -13,12 +13,15 @@
     <div class="chef-header">
         <img src="{{chef.avatar_url}}" alt="{{chef.name}}">
         <h2>{{chef.name}}</h2>
-        <p>{{chef.recipes}} receitas</p>
+        <p>{{chef.total_recipes}} receitas</p>
     </div>
     <section id="box">
         <h3>Receitas</h3>
         {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
         {{loadRecipes(recipes)}}
+        {% if recipes == '' %}
+            <h3>Não possui</h3>
+        {% endif %}
     </section>
 
 </div>

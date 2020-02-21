@@ -19,9 +19,9 @@
     </div>
 
     <form action="/admin/chefs?_method=PUT" method="post" id="save_chef">
-        {% include './chefModel.njk' %}
-        
         <input type="hidden" name="id" value="{{chef.id}}">
+        
+        {% include './chefModel.njk' %}
     </form>
 </main>
 {% endblock content %}

@@ -1,4 +1,3 @@
-const data = require('../../../data.json')
 const Chefs = require('../models/chefs')
 
 exports.index = function(req, res) {
@@ -39,7 +38,9 @@ exports.show = function(req, res) {
         callback(chef) {
             if(!chef) return res.send("Chef not found!")
 
-            return res.render('admin/chefs/chef', {chef, recipes: data.recipes})
+            Chefs.selectRecipesById(id, function(recipes) {
+                return res.render('admin/chefs/chef', { chef, recipes })
+            })
         }
     }
 
@@ -53,7 +54,7 @@ exports.edit = function(req, res) {
         callback(chef) {
             if (!chef) return res.send("Chef not found!")
     
-            return res.render(`admin/chefs/edit`, { chef })
+            return res.render(`admin/chefs/edit`, {chef})
         }
     }
 

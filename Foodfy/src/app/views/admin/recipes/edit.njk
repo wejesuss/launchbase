@@ -6,22 +6,22 @@
 
 {% block content %}
 <div class="recipe">
-    <div class="recipe-dashboard delete">
-        <form action="/admin/recipes?_method=DELETE" method="post" class="recipe-controller">
-            <input type="hidden" name="id" value="{{recipe.id}}">
-            <button class="delete-button" id="button-delete" type="submit">Deletar receita</button>
-        </form>
+    <div class="recipe-dashboard">
+        <h4>Editando receita</h4>
+        <div class="recipe-controller">
+            <form action="/admin/recipes?_method=DELETE" method="post" class="delete-form">
+                <input type="hidden" name="id" value="{{recipe.id}}">
+                <button id="button-delete" type="submit">Deletar receita</button>
+            </form>
+
+            <button form="save_recipe" type="submit">Salvar receita</button>
+        </div>
     </div>
 
-    <form action="/admin/recipes?_method=PUT" method="post">
-        <div class="recipe-dashboard">
-            <h4>Editando receita</h4>
-            <button type="submit">Salvar receita</button>
-        </div>
-
-        {% include './recipeModel.njk' %}
-        
+    <form action="/admin/recipes?_method=PUT" method="post" id="save_recipe">
         <input type="hidden" name="id" value="{{recipe.id}}">
+        
+        {% include './recipeModel.njk' %}
     </form>
 </div>
 
