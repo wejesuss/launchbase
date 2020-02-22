@@ -24,7 +24,7 @@ if(formDelete) {
 // add pages navigation
 function paginate(selectedPage, totalPages) {
     let pages = [],
-        oldPage
+        previousPage
 
     for (let currentPage = 1; currentPage <= totalPages; currentPage++) {
         const firstAndLastPage = currentPage == 1 || currentPage == totalPages
@@ -33,12 +33,12 @@ function paginate(selectedPage, totalPages) {
 
 
         if (firstAndLastPage || pageBeforeselectedPage && pageAfterselectedPage) {
-            if (oldPage && currentPage - oldPage > 2) pages.push('...')
-            if (oldPage && currentPage - oldPage == 2) pages.push(oldPage + 1)
+            if (previousPage && currentPage - previousPage > 2) pages.push('...')
+            if (previousPage && currentPage - previousPage == 2) pages.push(previousPage + 1)
 
             pages.push(currentPage)
 
-            oldPage = currentPage
+            previousPage = currentPage
         }
     }
 
