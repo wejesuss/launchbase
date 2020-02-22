@@ -9,6 +9,13 @@
         <h3>Gerenciar receitas</h3>
         {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
         {{ loadRecipes(recipes) }}
+        
+        <div class="pagination"
+            data-page = {{pagination.page}}
+            data-total = {{pagination.total}}
+            data-filter = {{filter}}
+        >
+        </div>
     </section>
 
 {% endblock content %}

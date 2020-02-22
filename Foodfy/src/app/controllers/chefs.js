@@ -76,7 +76,17 @@ exports.put = function(req, res) {
 }
 
 exports.delete = function(req, res) {
-    Chefs.delete(req.body.id, function() {
-        return res.redirect('/admin/chefs')
+    const { id } = req.body
+
+    Chefs.selectRecipesById(id, function(recipes) {
+        if(!recipes[0]) {
+            Chefs.delete(id, function() {
+                return res.redirect('/admin/chefs')
+            })
+        } else {
+            return res.send("Unable to exclude chefs with at least one recipe")
+        }
+
     })
+    
 }

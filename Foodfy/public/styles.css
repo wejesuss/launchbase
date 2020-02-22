@@ -558,3 +558,28 @@ button[type="submit"] {
     color: #777777;
     line-height: 24px;
 }
+
+/* === PAGINATION === */
+.pagination {
+    width: 940px;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.pagination a, .pagination span {
+    margin-right: 10px;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.pagination a:hover {
+    transition: all 300ms;
+    filter: brightness(0.3);
+    border-bottom: 1px solid var(--primary-color);
+    padding: 2px;
+}
+
+.pagination a.active {
+    filter: brightness(0.3);
+    font-size: 20px;
+}

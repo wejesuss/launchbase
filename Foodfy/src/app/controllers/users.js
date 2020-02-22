@@ -20,7 +20,7 @@ exports.index = function(req, res) {
 exports.list = function(req, res) {
     let { filter, page, limit } = req.query
     page = page || 1
-    limit = limit || 2
+    limit = limit || 3
     
     let offset = limit * (page - 1)
 

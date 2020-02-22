@@ -4,7 +4,7 @@ const { verifyFieldsOfArray } = require('../../utils/utils')
 exports.index = function(req, res) {
     let { page, limit } = req.query
     page = page || 1
-    limit = limit || 2
+    limit = limit || 4
     
     let offset = limit * (page - 1)
     const params = {
@@ -23,7 +23,7 @@ exports.index = function(req, res) {
         }
     }
 
-    Recipes.all(params)
+    Recipes.paginate(params)
 }
 
 exports.create = function(req, res) {
