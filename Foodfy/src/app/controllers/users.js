@@ -18,12 +18,26 @@ exports.index = function(req, res) {
 }
 
 exports.list = function(req, res) {
-    const { filter } = req.query
+    let { filter, page, limit } = req.query
+    page = page || 1
+    limit = limit || 2
+    
+    let offset = limit * (page - 1)
 
     const params = {
         filter,
+        limit,
+        offset,
         callback(recipes) {
-            return res.render("users/recipes", {recipes, filter})
+            let pagination
+            if(recipes[0]) {
+                pagination = {
+                    total: Math.ceil(recipes[0].total / limit),
+                    page
+                }
+            }
+
+            return res.render("users/recipes", { recipes, filter, pagination })
         }
     }
 

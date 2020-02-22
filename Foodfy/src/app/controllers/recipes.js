@@ -2,9 +2,28 @@ const Recipes = require('../models/recipes')
 const { verifyFieldsOfArray } = require('../../utils/utils')
 
 exports.index = function(req, res) {
-    Recipes.all(function(recipes) {
-        return res.render("admin/recipes/index", {recipes});
-    })
+    let { page, limit } = req.query
+    page = page || 1
+    limit = limit || 2
+    
+    let offset = limit * (page - 1)
+    const params = {
+        limit,
+        offset,
+        callback(recipes) {
+            let pagination
+            if(recipes[0]) {
+                pagination = {
+                    total: Math.ceil(recipes[0].total / limit),
+                    page
+                }
+            }
+
+            return res.render("admin/recipes/index", { recipes, pagination })
+        }
+    }
+
+    Recipes.all(params)
 }
 
 exports.create = function(req, res) {

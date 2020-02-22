@@ -2,12 +2,23 @@ const db = require('../../config/db')
 const { date } = require('../../utils/utils')
 
 module.exports = {
-    all(callback) {
-        db.query(`SELECT recipes.*, chefs.name as chef_name
+    all(params) {
+        const { limit, offset, callback } = params
+
+        let query = "",
+            totalQuery = `(
+                SELECT count(*) FROM recipes
+            ) AS total`
+
+        query = `SELECT recipes.*, ${totalQuery}, chefs.name as chef_name
         FROM recipes
         LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
-        ORDER BY recipes.id ASC`, function(err, results) {
-            if (err) throw `Database error! ${err}`
+        ORDER BY recipes.id ASC LIMIT $1 OFFSET $2
+        `
+        
+        db.query(query, [limit, offset], function(err, results) {
+            if(err) throw `Database error! ${err}`
+
             callback(results.rows)
         })
     },
@@ -116,32 +127,32 @@ module.exports = {
         })
     },
     paginate(params) {
-        const { filter, callback } = params
+        const { filter, limit, offset, callback } = params
 
         let query = "",
-            filterQuery = ""
-            // totalQuery = `(
-            //     SELECT count(*) FROM recipes
-            // ) AS total`
+            filterQuery = "",
+            totalQuery = `(
+                SELECT count(*) FROM recipes
+            ) AS total`
 
         if(filter) {
             filterQuery = `
             WHERE recipes.title ILIKE '%${filter}%'
             `
-            // totalQuery = `(
-            //     SELECT count(*) FROM recipes
-            //     ${filterQuery}
-            // ) AS total`
+            totalQuery = `(
+                SELECT count(*) FROM recipes
+                ${filterQuery}
+            ) AS total`
         }
 
-        query = `SELECT recipes.*, chefs.name as chef_name
+        query = `SELECT recipes.*, ${totalQuery}, chefs.name as chef_name
         FROM recipes
         LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
         ${filterQuery}
-        ORDER BY id ASC
+        ORDER BY recipes.id ASC LIMIT $1 OFFSET $2
         `
         
-        db.query(query, function(err, results) {
+        db.query(query, [limit, offset], function(err, results) {
             if(err) throw `Database error! ${err}`
 
             callback(results.rows)
