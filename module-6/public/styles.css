@@ -1,0 +1,355 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+
+:root {
+    --primary-color:#7159c1;
+    --secondary-color:#777;
+    --tertiary-color:#F7DF1E;
+}
+
+* {
+    padding: 0;
+    border: none;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--primary-color);
+    
+}
+
+header {
+    width: 100%;
+    background-color: white;
+    padding: 32px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.links {
+    font-size: 22px;
+}
+
+.links a + a {
+    margin-left: 32px;
+}
+
+.links a {
+    color: var(--secondary-color);
+    position: relative;
+}
+
+.links a:hover {
+    color: var(--primary-color);
+    filter: brightness(0.7);
+    
+}
+
+.links a.active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.links a::after {
+    content: "";
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -10%;
+}
+
+.links a:hover::after {
+    width: 100%;
+    transition: all ease-in-out 300ms ;
+}
+
+/* === CARD === */
+
+.card {
+    background-color: white;
+    width: 800px;
+    min-height: 400px;
+    margin: 45px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    /* box shadow */
+    box-shadow: 10px 10px 35px -2px rgba(0, 0, 0, 0.5);
+
+    /* animation */
+    animation: down 300ms ease-in;
+}
+
+/* === DETAILS === */
+
+.details {
+    padding: 32px;
+}
+
+.details .item:last-child {
+    border: none;
+}
+
+.details .item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+    padding: 16px 0;
+}
+
+
+.details h3,
+.details .item div:nth-child(1) {
+    font-size: 14px;
+    color: var(--secondary-color);
+    line-height: 24px;
+    letter-spacing: 1px;
+    font-weight: normal;
+}
+
+.details .item div:nth-child(2) {
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+.details h3 {
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.details .item span {
+    padding: 8px 16px;
+    background-color: var(--tertiary-color);
+    display: inline-block;
+    border-radius: 16px;
+    color: #777;
+    margin: 8px 4px 0 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+/* === ANIMATIONS === */
+
+@keyframes down {
+    from {
+        opacity: 0;
+        transform: translate(15px, 15px)
+    }
+    
+    to {
+        opacity: 1;
+    }
+}
+
+/* === FORM === */
+
+input, select {
+    width: 100%;
+    outline: none;
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+input[type="radio"] {
+    width: initial;
+    margin-right: 4px;
+    
+}
+
+input::placeholder {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+button[type="submit"],
+a.button {
+    width: 100%;
+    padding: 8px 32px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 24px;
+    border-radius: 4px;
+    background-color: var(--tertiary-color);
+}
+
+a.button {
+    display: block;
+    color: #000;
+    box-sizing: border-box;
+    text-align: center;
+    
+}
+
+#form_delete button[type="submit"] {
+    background-color: lightcoral;
+    margin-top: 10px;
+}
+
+/* === INDEX INSTRUCTOR === */
+
+.table-container {
+    display: block;
+    box-sizing: border-box;
+    padding: 40px;
+}
+
+.table-container table {
+    border-spacing: 0;
+}
+
+th {
+    font-size: 14px;
+    color: var(--secondary-color);
+}
+
+th, td {
+    padding: 16px;
+    border-bottom: 1px solid #f5d34b;
+
+}
+
+thead tr th {
+    text-align: left;
+    text-transform: uppercase;
+}
+
+tbody tr td:first-child  {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    align-content: center;
+    min-height: 82px;
+    height: -webkit-fill-available;
+}
+
+tbody tr td:first-child span {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 1px solid var(--tertiary-color);
+    box-shadow: black 4px 4px 5px -4px;
+}
+
+.table-container > a {
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.table-container tbody tr td:nth-child(3),
+.table-container thead tr th:last-child,
+.table-container tbody tr td:last-child {
+    text-align: center;
+}
+
+.table-container tbody tr td:last-child a,
+.table-container > a {
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 4px;
+    color: white;
+    text-transform: uppercase;
+    background-color: var(--primary-color);
+}
+
+.table-container tbody tr:last-child td {
+    border: none;
+}
+
+.table-container tbody tr td:nth-child(2) span {
+    padding: 8px 16px;
+    background-color: var(--tertiary-color);
+    display: inline-block;
+    border-radius: 16px;
+    color: #777;
+    margin: 0 4px 0 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.table-container .header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.table-container .header a {
+    width: 120px;
+    color: white;
+    margin: 0;
+    background-color: var(--primary-color);
+}
+
+.table-container .header form {
+    display: grid;
+    grid-gap: 8px;
+    grid-template-columns: 1fr 120px;
+    align-items: center;
+}
+
+.header form input {
+    border: 1px solid #eee;
+    padding: 4px 8px;
+    box-sizing: border-box;
+}
+
+.table-container .header form button {
+    margin: 0;
+    color: white;
+    background-color: var(--primary-color);
+}
+
+.table-container {
+    display: grid;
+    grid-template: 64px 1fr 16px / 1fr;
+}
+
+.table-container .header {
+    margin: 0;
+    align-self: start;
+}
+
+.table-container .pagination {
+    margin: 0;
+    align-self: end;
+    justify-self: center;
+}
+
+.pagination a,
+.pagination span {
+    color: var(--primary-color);
+    margin-right: 16px;
+}
+
+.pagination a:hover {
+    filter: brightness(0.3);
+    font-size: 17px;
+}
+
+.pagination a::after {
+    content: "";
+    width: 0;
+    height: 1px;
+    background-color: var(--primary-color);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -10%;
+}
+
+.pagination a:hover::after {
+    width: 100%;
+    transition: all ease-in-out 300ms ;
+}
