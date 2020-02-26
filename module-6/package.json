@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "debug": "nodemon --inspect=0.0.0.0:9229 src/server.js",
     "start": "npm-run-all -p nodemon browsersync",
     "nodemon": "nodemon src/server.js",
     "browsersync": "browser-sync start --proxy http://localhost:5000 --files 'public, src/app/views'"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "intl": "^1.2.5",
     "method-override": "^3.0.0",
+    "multer": "^1.4.2",
     "nunjucks": "^3.2.0",
     "pg": "^7.17.1"
   },

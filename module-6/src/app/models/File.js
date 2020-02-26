@@ -1,4 +1,5 @@
 const db = require('../../config/db')
+const fs = require('fs')
 
 module.exports = {
     all() {
@@ -6,38 +7,27 @@ module.exports = {
             SELECT * FROM products
         `)
     },
-    create(data) {
+    create({ filename, path, product_id }) {
         const query = `
-            INSERT INTO products (
-                category_id,
-                user_id,
+            INSERT INTO files (
                 name,
-                description,
-                previous_price,
-                price,
-                quantity,
-                status
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                path,
+                product_id
+            ) VALUES ($1, $2, $3)
             RETURNING id
         `
-        data.price = data.price.replace(/\D/g,"")
 
         const values = [
-            data.category_id,
-            data.user_id || 1,
-            data.name,
-            data.description,
-            data.previous_price || data.price,
-            data.price,
-            data.quantity,
-            data.status || 1
+            filename,
+            path,
+            product_id
         ]
 
         return db.query(query, values)
     },
     find(id) {
         return db.query(`SELECT * 
-        FROM products WHERE id = $1`, [id])
+        FROM files WHERE product_id = $1`, [id])
     },
     update(data) {
         const query = `
@@ -66,7 +56,16 @@ module.exports = {
 
         return db.query(query, values)
     },
-    delete(id) {
-        return db.query(`DELETE FROM products WHERE id = $1`, [id])
+    async delete(id) {
+        try {
+            const result = await db.query(`SELECT * FROM files WHERE id = ${id}`)
+            const file = result.rows[0]
+            
+            fs.unlinkSync(file.path)
+            
+            return db.query(`DELETE FROM files WHERE id = $1`, [id])
+        } catch(err) {
+            throw err
+        }
     }
 }

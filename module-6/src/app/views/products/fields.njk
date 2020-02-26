@@ -32,7 +32,37 @@
     </div>
 </div>
 
-{# CAMPO DE FOTO #}
+<div class="item">
+    <div>Fotos</div>
+    <div>
+        <div id="photos-upload">
+            <input 
+            type="file" 
+            name="photos" 
+            id="photos-input"
+            multiple
+            accept="image/*"
+            onchange="PhotosUpload.handleFileInput(event)"
+            >
+            <p>Selecione até 6 fotos</p>
+        </div>
+        <div id="photos-preview">
+            {% if files %}
+                {% for image in files %}
+                    <div class="photo" id="{{image.id}}">
+                        <img src="{{image.src}}" alt="{{image.name}}">
+                        <i class="material-icons"
+                        onclick="PhotosUpload.removePreviousPhoto(event)"
+                        >
+                        close
+                        </i>
+                    </div>
+                {% endfor %}
+                <input type="hidden" name="removed_files">
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 <div class="item">
     <div>Valor</div>
@@ -62,7 +92,7 @@
     </div>
 </div>
 
-{% if product.status %}
+{% if (product.status == '1') or (product.status == 0) %}
 <div class="item">
     <div>Disponível?</div>
     <div>
