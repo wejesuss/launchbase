@@ -120,6 +120,19 @@ const PhotosUpload = {
     }
 }
 
+const ImageGallery = {
+    highlightImage: document.querySelector('.gallery .highlight > img'),
+    previews: document.querySelectorAll('.gallery-preview img'),
+    setImage(e) {
+        const { target } = e
+
+        ImageGallery.previews.forEach(preview => preview.classList.remove('active'))
+        target.classList.add('active')
+
+        ImageGallery.highlightImage.src = target.src
+    }
+}
+
 //add delete confirmation
 const formDelete = document.querySelector("#form_delete")
 
