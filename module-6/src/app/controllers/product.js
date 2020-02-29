@@ -47,8 +47,8 @@ module.exports = {
             hour: `${hour}h${minutes}`,
         }
 
-        product.previous_price = formatPrice(product.previous_price)
-        product.price = formatPrice(product.price)
+        product.previous_price = formatPrice(product.previous_price).replace("R$", "R$ ")
+        product.price = formatPrice(product.price).replace("R$", "R$ ")
 
         // get images
         results = await File.find(product.id)
@@ -66,8 +66,8 @@ module.exports = {
 
         if (!product) return res.send("Product not found!")
 
-        product.previous_price = formatPrice(product.previous_price)
-        product.price = formatPrice(product.price)
+        product.previous_price = formatPrice(product.previous_price).replace("R$", "R$ ")
+        product.price = formatPrice(product.price).replace("R$", "R$ ")
         
         // get Category
         results = await Category.all()
@@ -92,12 +92,6 @@ module.exports = {
             }
         }
 
-        if(req.files.length != 0) {
-            const newFilesPromise = req.files.map(file => File.create({...file, product_id: req.body.id}))
-            
-            await Promise.all(newFilesPromise)
-        }
-
         if (req.body.removed_files) {
             const removed_files = req.body.removed_files.split(',')
             const lastIndex = removed_files.length - 1
@@ -106,6 +100,19 @@ module.exports = {
             const removedFilesPromise = removed_files.map(id => File.delete(id))
             
             await Promise.all(removedFilesPromise)
+        }
+
+        if(req.files.length != 0) {
+            const oldFiles = await File.find(req.body.id)
+            const totalFiles = oldFiles.rows.length + req.files.length
+
+            if(totalFiles <= 6 ) {
+                const newFilesPromise = req.files.map(file => 
+                    File.create({...file, product_id: req.body.id}))
+            
+                await Promise.all(newFilesPromise)
+            }
+            
         }
 
         req.body.price = req.body.price.replace(/\D/g,"")

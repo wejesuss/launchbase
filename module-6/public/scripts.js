@@ -23,7 +23,10 @@ const PhotosUpload = {
         const { files: fileList } = event.target
         PhotosUpload.input = event.target
         
-        if(PhotosUpload.hasLimit(event)) return
+        if(PhotosUpload.hasLimit(event)) {
+            PhotosUpload.updateInputFiles()
+            return
+        }
 
         Array.from(fileList).forEach(file => {
             PhotosUpload.files.push(file)
@@ -42,7 +45,7 @@ const PhotosUpload = {
             reader.readAsDataURL(file)
         })
         
-        PhotosUpload.input.files = PhotosUpload.getAllFiles()
+        PhotosUpload.updateInputFiles()
     },
     getAllFiles() {
         const dataTransfer = new ClipboardEvent("").clipboardData || new DataTransfer()
@@ -56,7 +59,6 @@ const PhotosUpload = {
         
         if (fileList.length > this.uploadLimit) {
             alert(`Envie no máximo ${this.uploadLimit} fotos!`)
-            PhotosUpload.input.files = PhotosUpload.getAllFiles()
             event.preventDefault()
             return true
         }
@@ -71,7 +73,6 @@ const PhotosUpload = {
 
         if(totalPhotos > this.uploadLimit) {
             alert(`Você atingiu o máximo de ${this.uploadLimit} fotos!`)
-            PhotosUpload.input.files = PhotosUpload.getAllFiles()
             event.preventDefault()
             return true
         }
@@ -98,11 +99,14 @@ const PhotosUpload = {
     },
     removePhoto(event) {
         const photoDiv = event.target.parentNode // <div class='photos'>
-        let photosArray = Array.from(PhotosUpload.preview.children)
-        const index = photosArray.indexOf(photoDiv)
+        const newFiles = Array.from(PhotosUpload.preview.children).filter(file => {
+            if(file.classList.contains('photo') && !file.getAttribute('id')) return true
+        })
         
+        const index = newFiles.indexOf(photoDiv)
         PhotosUpload.files.splice(index, 1)
-        PhotosUpload.input.files = PhotosUpload.getAllFiles()
+        
+        PhotosUpload.updateInputFiles()
 
         photoDiv.remove()
     },
@@ -117,6 +121,9 @@ const PhotosUpload = {
         }
         
         photoDiv.remove()
+    },
+    updateInputFiles() {
+        PhotosUpload.input.files = PhotosUpload.getAllFiles()
     }
 }
 
@@ -130,6 +137,25 @@ const ImageGallery = {
         target.classList.add('active')
 
         ImageGallery.highlightImage.src = target.src
+        LightBox.image.src = target.src
+    }
+}
+
+const LightBox = {
+    target: document.querySelector('.highlight .lightbox-target'),
+    image: document.querySelector('.highlight .lightbox-target img'),
+    closeButton: document.querySelector('.lightbox-target .lightbox-close'),
+    open() {
+        LightBox.target.style.opacity = 1
+        LightBox.target.style.top = 0
+        LightBox.target.style.bottom = 0
+        LightBox.closeButton.style.top = 0
+    },
+    close() {
+        LightBox.target.style.opacity = 0
+        LightBox.target.style.top = '-100%'
+        LightBox.target.style.bottom = 'initial'
+        LightBox.closeButton.style.top = '-80px'
     }
 }
 

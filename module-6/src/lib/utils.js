@@ -1,3 +1,5 @@
+const Intl = require('Intl')
+
 module.exports = {
     date(timestamp) {
         const birthDate = new Date(timestamp)
