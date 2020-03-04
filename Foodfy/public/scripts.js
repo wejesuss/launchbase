@@ -237,52 +237,6 @@ for (const items of menuItems) {
     }
 }
 
-// Stop creation without image
-const chefForm = document.querySelector('form#save_chef')
-const recipeForm = document.querySelector('form#save_recipe')
-
-if(chefForm) chefForm.addEventListener("submit", e => handleStopSubmit(e))
-if(recipeForm) recipeForm.addEventListener("submit", e => handleStopSubmit(e))
-
-function handleStopSubmit(event) {
-    let inputs = document.querySelectorAll('.item input')
-    let selects = document.querySelectorAll('.item select')
-    
-    if(inputs) {
-        inputs = Array.from(inputs).reduce((inputArray, input) => {
-            if (input.getAttribute('name') != 'removed_files' && input.getAttribute('name') != 'photos') {
-                
-                inputArray.push(input)
-            }
-            
-            return inputArray
-        }, [])
-    }
-
-    if(selects) {
-        selects = Array.from(selects).reduce((selectArray, select) => {
-            selectArray.push(select)
-
-            return selectArray
-        }, [])
-    }
-
-    let hasEmptyFields
-
-    inputs.forEach(input => {
-        if (input.value == '') hasEmptyFields = true
-    })
-
-    selects.forEach(select => {
-        if(select.value == '') hasEmptyFields = true
-    })
-
-    if(hasEmptyFields) {
-        alert("Por favor, preencha todos os campos!")
-        event.preventDefault()
-    }
-}
-
 // Delete confirmation
 const formDelete = document.querySelector('.delete-form');
 

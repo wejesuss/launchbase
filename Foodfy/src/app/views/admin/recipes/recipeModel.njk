@@ -1,11 +1,11 @@
 <div class="item">
     <div>Nome da receita *</div>
-    <input type="text" name="title" value="{{ recipe.title }}">
+    <input type="text" name="title" value="{{ recipe.title }}" required>
 </div>
 
 <div class="item">
     <div>Nome do chef *</div>
-    <select name="chef_id">
+    <select name="chef_id" required>
         <option value="">Selecione um Chef...</option>
         {% for chef in chefs %}
             <option 
@@ -22,7 +22,7 @@
 
 <div class="item">
     <div>Imagem da receita *</div>
-    <input type="url" name="image" placeholder="https://" value="{{ recipe.image }}">
+    <input type="url" name="image" placeholder="https://" value="{{ recipe.image }}" required>
 </div>
 
 <div class="item">
@@ -31,12 +31,12 @@
         {% if recipe.ingredients %}
             {% for ingredient in recipe.ingredients %}
             <div class="ingredient">
-                <input type="text" name="ingredients[]" value="{{ ingredient }}">
+                <input type="text" name="ingredients[]" value="{{ ingredient }}" required>
             </div>
             {% endfor %}
         {% else %}
             <div class="ingredient">
-            <input type="text" name="ingredients[]" value="">
+            <input type="text" name="ingredients[]" value="" required>
             </div>
         {% endif %}
     </div>
@@ -49,12 +49,12 @@
         {% if recipe.preparation %}
             {% for preparation in recipe.preparation %}
             <div class="preparation">
-                <input type="text" name="preparation[]" value="{{ preparation }}">
+                <input type="text" name="preparation[]" value="{{ preparation }}" required>
             </div>
             {% endfor %}
         {% else %}
             <div class="preparation">
-            <input type="text" name="preparation[]" value="">
+            <input type="text" name="preparation[]" value="" required>
             </div>
         {% endif %}
     </div>
