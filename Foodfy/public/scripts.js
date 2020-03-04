@@ -1,3 +1,138 @@
+const PhotosUpload = {
+    uploadLimit: 5,
+    input: "",
+    files: [],
+    preview: document.querySelector('#photos-preview'),
+    apply(func, params) {
+        if(func.includes('Chefs')) PhotosUpload.uploadLimit = 1
+
+        PhotosUpload[func](params)
+        
+        const previewItems = []
+        PhotosUpload.preview.childNodes.forEach(item => {
+            if(item.classList && item.classList.value == 'photo')
+                previewItems.push(item)
+        })
+        
+        if(previewItems.length > 1) {
+            PhotosUpload.preview.style.gridTemplateColumns = "repeat(5, 1fr)"
+            PhotosUpload.preview.style.width = "100%"
+        }
+
+    },
+    handleFileInputChefs(event) {
+        const { files: fileList } = event.target
+        PhotosUpload.input = event.target
+        
+        if(PhotosUpload.hasLimit(event)) {
+            PhotosUpload.updateInputFiles()
+            return
+        }
+
+        Array.from(fileList).forEach(file => {
+            PhotosUpload.files.push(file)
+            
+            const reader = new FileReader()
+            reader.onload = () => {
+                const image = new Image()
+                image.src = String(reader.result)
+
+                const div = PhotosUpload.getContainer(image)
+
+                PhotosUpload.preview.appendChild(div)
+            
+            }
+
+            reader.readAsDataURL(file)
+        })
+
+        PhotosUpload.updateInputFiles()
+
+    },
+    hasLimit(event) {
+        const { input, preview, uploadLimit } = PhotosUpload
+        const { files: fileList } = input
+
+        if(fileList.length > PhotosUpload.uploadLimit) {
+            (uploadLimit > 1) ? alert(`Envie no máximo ${PhotosUpload.uploadLimit} fotos!`) : alert(`Envie no máximo ${PhotosUpload.uploadLimit} foto!`)
+            event.preventDefault()
+            return true
+        }
+
+        const photosDiv = []
+        preview.childNodes.forEach(item => {
+            if(item.classList && item.classList.value == 'photo')
+                photosDiv.push(item)
+        })
+
+        const totalPhotos = fileList.length + photosDiv.length
+
+        if(totalPhotos > uploadLimit) {
+            (uploadLimit > 1) ? alert(`Envie no máximo ${PhotosUpload.uploadLimit} fotos!`) : alert(`Envie no máximo ${PhotosUpload.uploadLimit} foto!`)
+            event.preventDefault()
+            return true
+        }
+        
+        return false
+    },
+    getContainer(image) {
+        const div = document.createElement('div')
+        div.classList.add('photo')
+        div.appendChild(image)
+        div.appendChild(PhotosUpload.getRemoveButton())
+
+        return div
+    },
+    getRemoveButton() {
+        const button = document.createElement('i')
+        button.classList.add('material-icons')
+        button.onclick = PhotosUpload.removePhoto
+        button.innerHTML = 'close'
+
+        return button
+    },
+    getAllFiles() {
+        const datatransfer = new DataTransfer() || new ClipboardEvent("").clipboardData
+
+        PhotosUpload.files.forEach(file => datatransfer.items.add(file))
+
+        return datatransfer.files
+    },
+    updateInputFiles() {
+        PhotosUpload.input.files = PhotosUpload.getAllFiles()
+    },
+    removePhoto(event) {
+        const photoDiv = event.target.parentNode
+        const newFiles = Array.from(PhotosUpload.preview.children).filter(file => {
+            if(file.classList.contains('photo') && !file.getAttribute('id')) return true
+        })
+
+        const index = newFiles.indexOf(photoDiv)
+        PhotosUpload.files.splice(index, 1)
+        PhotosUpload.updateInputFiles()
+        
+        photoDiv.remove()
+    },
+    removePreviousPhoto(event) {
+        const photoDiv = event.target.parentNode
+        
+        if(photoDiv.id) {
+            const removedFiles = document.querySelector('input[name="removed_files"]')
+            if(removedFiles) {
+                removedFiles.value += `${photoDiv.id},`
+            }
+        }
+
+        photoDiv.remove()
+    },
+    handleFileInputRecipes(event) {
+        console.log(PhotosUpload.uploadLimit)
+    }
+}
+
+
+
+
 //pagination
 
 function paginate(selectedPage, totalPages) {
@@ -75,7 +210,6 @@ if (search) {
 }
 
 // show/hide
-
 const showHides = document.getElementsByClassName('topic');
 
 for (let showHide of showHides) {
@@ -95,7 +229,6 @@ for (let showHide of showHides) {
 }
 
 // Add Bold
-
 const menuItems = document.querySelectorAll('.menus a');
 const currentPage = window.location.pathname
 for (const items of menuItems) {
@@ -104,8 +237,53 @@ for (const items of menuItems) {
     }
 }
 
-// Delete confirmation
+// Stop creation without image
+const chefForm = document.querySelector('form#save_chef')
+const recipeForm = document.querySelector('form#save_recipe')
 
+if(chefForm) chefForm.addEventListener("submit", e => handleStopSubmit(e))
+if(recipeForm) recipeForm.addEventListener("submit", e => handleStopSubmit(e))
+
+function handleStopSubmit(event) {
+    let inputs = document.querySelectorAll('.item input')
+    let selects = document.querySelectorAll('.item select')
+    
+    if(inputs) {
+        inputs = Array.from(inputs).reduce((inputArray, input) => {
+            if (input.getAttribute('name') != 'removed_files' && input.getAttribute('name') != 'photos') {
+                
+                inputArray.push(input)
+            }
+            
+            return inputArray
+        }, [])
+    }
+
+    if(selects) {
+        selects = Array.from(selects).reduce((selectArray, select) => {
+            selectArray.push(select)
+
+            return selectArray
+        }, [])
+    }
+
+    let hasEmptyFields
+
+    inputs.forEach(input => {
+        if (input.value == '') hasEmptyFields = true
+    })
+
+    selects.forEach(select => {
+        if(select.value == '') hasEmptyFields = true
+    })
+
+    if(hasEmptyFields) {
+        alert("Por favor, preencha todos os campos!")
+        event.preventDefault()
+    }
+}
+
+// Delete confirmation
 const formDelete = document.querySelector('.delete-form');
 
 if (formDelete) {

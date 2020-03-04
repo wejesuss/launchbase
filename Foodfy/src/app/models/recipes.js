@@ -7,7 +7,7 @@ module.exports = {
         db.query(`SELECT recipes.*, chefs.name as chef_name
         FROM recipes
         LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
-        ORDER BY id ASC LIMIT ${limit}`, function(err, results) {
+        ORDER BY created_at DESC LIMIT ${limit}`, function(err, results) {
             if(err) throw `Database error! ${err}`
             
             callback(results.rows)
@@ -34,18 +34,16 @@ module.exports = {
         const query = `INSERT INTO recipes (
             title,
             chef_id,
-            image,
             ingredients,
             preparation,
             information,
             created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ) VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id
         `
         const values = [
             data.title,
             data.chef_id,
-            data.image,
             data.ingredients,
             data.preparation,
             data.information,
@@ -76,17 +74,15 @@ module.exports = {
         UPDATE recipes SET
             title = ($1),
             chef_id = ($2),
-            image = ($3),
-            ingredients = ($4),
-            preparation = ($5),
-            information = ($6)
-        WHERE id = $7
+            ingredients = ($3),
+            preparation = ($4),
+            information = ($5)
+        WHERE id = $6
         `
 
         const values = [
             data.title,
             data.chef_id,
-            data.image,
             data.ingredients,
             data.preparation,
             data.information,
@@ -110,12 +106,14 @@ module.exports = {
         const { filter, limit, offset, callback } = params
 
         let query = "",
+            orderBy = `ORDER BY created_at DESC`,
             filterQuery = "",
             totalQuery = `(
                 SELECT count(*) FROM recipes
             ) AS total`
 
         if(filter) {
+            orderBy = `ORDER BY updated_at DESC`
             filterQuery = `
             WHERE recipes.title ILIKE '%${filter}%'
             `
@@ -129,7 +127,7 @@ module.exports = {
         FROM recipes
         LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
         ${filterQuery}
-        ORDER BY recipes.id ASC LIMIT $1 OFFSET $2
+        ${orderBy} LIMIT $1 OFFSET $2
         `
         
         db.query(query, [limit, offset], function(err, results) {

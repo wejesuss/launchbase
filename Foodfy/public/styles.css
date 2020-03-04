@@ -3,6 +3,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
@@ -238,7 +239,8 @@ div.recipe {
 }
 
 #ingredients li::first-letter, 
-#preparation li::first-letter {
+#preparation li::first-letter,
+#information p::first-letter {
     text-transform: capitalize;
 }
 
@@ -247,10 +249,6 @@ div.recipe {
     color: #444444;
     line-height: 28px;
     text-align: justify;
-}
-
-#information p::first-letter {
-    text-transform: capitalize;
 }
 
 /* === RECIPE INGREDIENTS LISTS === */
@@ -438,7 +436,7 @@ button[type="submit"] {
 .item input, .item textarea, .item select {
     width: 100%;
     outline: none;
-    height: 5vh;
+    height: 7vh;
     padding: 15px 20px;
     box-sizing: border-box;
     margin: 10px 0 0;
@@ -478,6 +476,13 @@ button[type="submit"] {
 }
 
 /* === CHEF PAGE === */
+
+div.create-box {
+    width: 940px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    min-height: 80vh;
+}
 
 .chefs {
     width: 940px;
@@ -582,4 +587,89 @@ button[type="submit"] {
 .pagination a.active {
     filter: brightness(0.3);
     font-size: 20px;
+}
+
+/* INPUT FILES */
+
+form .item div.title {
+    font-family: Helvetica;
+    font-size: 16px;
+    color: #111111;
+    line-height: 19px;
+}
+
+
+form .item #photos-upload {
+    display: block;
+    margin-top: 10px;
+    position: relative;
+    width: 200px;
+    overflow: hidden;
+}
+
+form .item #photos-upload p {
+    background: #6558C3;
+    width: 100%;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: white;
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0px 2px 2px -6px #333;
+}
+
+form .item #photos-input {
+    margin-top: 0;
+    top: 0;
+    left: 0;
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+form .item #photos-preview {
+    display: grid;
+    grid-gap: 8px 2px;
+    width: 30vw;
+    margin: 8px 0;
+}
+
+form .item #photos-preview img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+form .item #photos-preview .photo {
+    position: relative;
+}
+
+form .item #photos-preview .photo i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    opacity: 0;
+    background-color:#efefefdd;
+    color: red;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-size: 500%;  
+    cursor: pointer;
+    transition: opacity 200ms;
+}
+
+form .item #photos-preview .photo i:hover {
+    opacity: 1;
 }

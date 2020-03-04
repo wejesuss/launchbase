@@ -11,6 +11,7 @@
         <div class="chef-controller">
             <form action="/admin/chefs?_method=DELETE" method="post" class="delete-form">
                 <input type="hidden" name="id" value="{{chef.id}}">
+                <input type="hidden" name="file_id" value="{{chef.file_id}}">
                 <button id="button-delete" type="submit">Deletar</button>
             </form>
             
@@ -18,8 +19,9 @@
         </div>
     </div>
 
-    <form action="/admin/chefs?_method=PUT" method="post" id="save_chef">
+    <form action="/admin/chefs?_method=PUT" method="post" id="save_chef" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{{chef.id}}">
+        <input type="hidden" name="file_id" value="{{chef.file_id}}">
         
         {% include './chefModel.njk' %}
     </form>

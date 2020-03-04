@@ -5,8 +5,8 @@
 {% endblock head %}
 
 {% block content %}
-<div class="recipe">
-    <form action="/admin/chefs" method="POST">
+<div class="create-box">
+    <form action="/admin/chefs" method="POST" id="save_chef" enctype="multipart/form-data">
         <div class="chef-dashboard">
             <h4>Criando chef</h4>
             <button type="submit">Salvar chef</button>

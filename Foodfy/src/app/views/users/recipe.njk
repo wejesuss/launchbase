@@ -1,25 +1,27 @@
 {% extends "layout.njk" %}
 
 {% block head %}
-    <title>Receita de {{recipe.title}}</title>
+    <title>Receita de
+        {{recipe.title}}</title>
 {% endblock head %}
 
 {% block content %}
-<div class="recipe">
+    <div class="recipe">
 
         <div class="recipe-header">
             <img src="{{recipe.image}}" alt="{{recipe.title}}">
             <h2>{{recipe.title}}</h2>
-            <p>por {{recipe.chef_name}}</p>
+            <p>por
+                {{recipe.chef_name}}</p>
         </div>
 
         <div class="recipe-content">
 
             <div id="ingredients" class="topic">
-            <div class="recipe-menu">
-                <h3>Ingredientes</h3>
-                <h4>ESCONDER</h4>
-            </div>
+                <div class="recipe-menu">
+                    <h3>Ingredientes</h3>
+                    <h4>ESCONDER</h4>
+                </div>
                 <div class="topic-content">
                     <ul>
                         {% for ingredient in recipe.ingredients %}
@@ -27,15 +29,15 @@
                         {% endfor %}
                     </ul>
 
-                </div> 
+                </div>
 
-            </div> 
+            </div>
 
             <div id="preparation" class="topic">
-            <div class="recipe-menu">
-                <h3>Modo de preparo</h3>
-                <h4>MOSTRAR</h4>
-            </div>
+                <div class="recipe-menu">
+                    <h3>Modo de preparo</h3>
+                    <h4>MOSTRAR</h4>
+                </div>
                 <div class="topic-content hidden">
                     <ul>
                         {% for preparation in recipe.preparation %}
@@ -43,22 +45,22 @@
                         {% endfor %}
                     </ul>
 
-                </div> 
-        
-            </div> 
+                </div>
+
+            </div>
 
             <div id="information" class="topic">
-            <div class="recipe-menu">
-                <h3>Informações adicionais</h3>
-                <h4>ESCONDER</h4>
-            </div>
+                <div class="recipe-menu">
+                    <h3>Informações adicionais</h3>
+                    <h4>ESCONDER</h4>
+                </div>
                 <div class="topic-content">
                     <p>{{recipe.information}}</p>
-                </div> 
+                </div>
 
-            </div> 
+            </div>
 
-        </div> 
+        </div>
 
-</div> 
+    </div>
 {% endblock content %}
