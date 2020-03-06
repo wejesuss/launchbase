@@ -6,19 +6,12 @@ const PhotosUpload = {
     apply(func, params) {
         if(func.includes('Chefs')) PhotosUpload.uploadLimit = 1
 
-        PhotosUpload[func](params)
-        
-        const previewItems = []
-        PhotosUpload.preview.childNodes.forEach(item => {
-            if(item.classList && item.classList.value == 'photo')
-                previewItems.push(item)
-        })
-        
-        if(previewItems.length > 1) {
+        if(PhotosUpload.uploadLimit > 1) {
             PhotosUpload.preview.style.gridTemplateColumns = "repeat(5, 1fr)"
-            PhotosUpload.preview.style.width = "100%"
+            PhotosUpload.preview.style.width = "80%"
         }
-
+        
+        PhotosUpload[func](params)
     },
     handleFileInputChefs(event) {
         const { files: fileList } = event.target
@@ -40,14 +33,12 @@ const PhotosUpload = {
                 const div = PhotosUpload.getContainer(image)
 
                 PhotosUpload.preview.appendChild(div)
-            
             }
 
             reader.readAsDataURL(file)
         })
 
         PhotosUpload.updateInputFiles()
-
     },
     hasLimit(event) {
         const { input, preview, uploadLimit } = PhotosUpload
@@ -126,15 +117,36 @@ const PhotosUpload = {
         photoDiv.remove()
     },
     handleFileInputRecipes(event) {
-        console.log(PhotosUpload.uploadLimit)
+        const { files: fileList } = event.target
+        PhotosUpload.input = event.target
+        
+        if(PhotosUpload.hasLimit(event)) {
+            PhotosUpload.updateInputFiles()
+            return
+        }
+
+        Array.from(fileList).forEach(file => {
+            PhotosUpload.files.push(file)
+            
+            const reader = new FileReader()
+            reader.onload = () => {
+                const image = new Image()
+                image.src = String(reader.result)
+
+                const div = PhotosUpload.getContainer(image)
+
+                PhotosUpload.preview.appendChild(div)
+            
+            }
+
+            reader.readAsDataURL(file)
+        })
+
+        PhotosUpload.updateInputFiles()
     }
 }
 
-
-
-
 //pagination
-
 function paginate(selectedPage, totalPages) {
     let pages = [],
         previousPage

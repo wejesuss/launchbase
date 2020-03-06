@@ -1,5 +1,4 @@
 const db = require('../../config/db')
-const { date } = require('../../utils/utils')
 
 module.exports = {
     findByLimit(params) {
@@ -24,44 +23,42 @@ module.exports = {
             callback(results.rows[0])
         })
     },
-    create(data, callback) {
-        const arrayOfBrokenLines = data.information.split("\r\n")
-        const stringWithLineBreaksTag = arrayOfBrokenLines.join('<br>')
-        if (stringWithLineBreaksTag) {
-            data.information = stringWithLineBreaksTag
+    create(data) {
+        try {
+            const arrayOfBrokenLines = data.information.split("\r\n")
+            const stringWithLineBreaksTag = arrayOfBrokenLines.join('<br>')
+            if (stringWithLineBreaksTag) {
+                data.information = stringWithLineBreaksTag
+            }
+
+            const query = `INSERT INTO recipes (
+                title,
+                chef_id,
+                ingredients,
+                preparation,
+                information
+            ) VALUES ($1, $2, $3, $4, $5)
+            RETURNING id
+            `
+            const values = [
+                data.title,
+                data.chef_id,
+                data.ingredients,
+                data.preparation,
+                data.information
+            ]
+
+            return db.query(query, values)
+        } catch (err) {
+            console.error(err)
         }
-
-        const query = `INSERT INTO recipes (
-            title,
-            chef_id,
-            ingredients,
-            preparation,
-            information,
-            created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id
-        `
-        const values = [
-            data.title,
-            data.chef_id,
-            data.ingredients,
-            data.preparation,
-            data.information,
-            date(Date.now()).iso
-        ]
-
-        db.query(query, values, (err, results) => {
-            if (err) throw `Database error! ${err}`
-
-            callback(results.rows[0])
-        })
     },
-    recipeSelectOptions(callback) {
-        db.query(`SELECT chefs.name, chefs.id FROM chefs`, function(err, results) {
-            if (err) throw `Database error! ${err}`
-
-            callback(results.rows)
-        })
+    recipeSelectOptions() {
+        try {
+            return db.query(`SELECT chefs.name, chefs.id FROM chefs`)
+        } catch (err) {
+            console.error(err)
+        }
     },
     update(data, callback) {
         const arrayOfBrokenLines = data.information.split("\r\n")

@@ -1,4 +1,5 @@
 const Recipes = require('../models/recipes')
+const RecipeFiles = require('../models/filesRecipes')
 const { verifyFieldsOfArray } = require('../../utils/utils')
 
 exports.index = function(req, res) {
@@ -26,15 +27,16 @@ exports.index = function(req, res) {
     Recipes.paginate(params)
 }
 
-exports.create = function(req, res) {
-    Recipes.recipeSelectOptions(function(options) {
-        if(!options) return res.send("Chefs not found!")
+exports.create = async function(req, res) {
+    const results = await Recipes.recipeSelectOptions()
+    const options = results.rows
 
-        return res.render('admin/recipes/create', {chefs: options})
-    })
+    if(!options) return res.send("Chefs not found! You can not create a recipe!")
+
+    return res.render('admin/recipes/create', {chefs: options})
 }
 
-exports.post = function(req, res) {
+exports.post = async function(req, res) {
     const keys = Object.keys(req.body);
     
     for (const key of keys) {
@@ -45,16 +47,20 @@ exports.post = function(req, res) {
         }
     }
 
-    const emptyIngredient = verifyFieldsOfArray(req.body.ingredients);
-    const emptyPreparation = verifyFieldsOfArray(req.body.preparation);
+    if(req.files.length == 0) return res.send("Please send at least one image!")
 
-    if (emptyIngredient || emptyPreparation) {
-        return res.send("Please, fill in all fields!");
-    }
+    const filesPromise = req.files.map(file => RecipeFiles.create({...file}))
+    let filesIds = await Promise.all(filesPromise)
+    
+    filesIds = filesIds.map(file => (file.rows[0].id)).sort()
 
-    Recipes.create(req.body, function(recipe) {
-        return res.redirect(`/admin/recipes/${recipe.id}`)
-    })
+    let results = await Recipes.create(req.body)
+    const recipeId = results.rows[0].id
+
+    const recipeFilesPromise = filesIds.map(id => RecipeFiles.createRecipeFiles(recipeId, id))
+    await Promise.all(recipeFilesPromise)
+
+    return res.redirect(`/admin/recipes/${recipeId}`)
 }
 
 exports.show = function(req, res) {
@@ -78,14 +84,15 @@ exports.edit = function(req, res) {
     const { id } = req.params
     const params = {
         id,
-        callback(recipe) {
+        async callback(recipe) {
             if (!recipe) {
                 return res.send("Recipe not found!");
             }
 
-            Recipes.recipeSelectOptions(function(options) {
-                return res.render('admin/recipes/edit', { recipe, chefs: options });
-            })
+            let results = await Recipes.recipeSelectOptions()
+            const options = results.rows
+
+            return res.render('admin/recipes/edit', { recipe, chefs: options });
         }
     }
 

@@ -38,7 +38,7 @@ exports.post = async function(req, res) {
         }
     }
 
-    if(!req.file) return res.send("Please send at least one image!")
+    if(!req.file) return res.send("Please send one image!")
     
     let results = await ChefFiles.create({...req.file})
     const fileId = results.rows[0].id

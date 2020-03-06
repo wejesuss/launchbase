@@ -395,6 +395,7 @@ div.details {
 
 .recipe-dashboard h4,
 .chef-dashboard h4 {
+    font-family: Helvetica;
     font-size: 24px;
     color: #111111;
     line-height: 28px;
@@ -433,6 +434,16 @@ button[type="submit"] {
     line-height: 19px;
 }
 
+.item div#ingredients > .ingredient:first-child input,
+.item div#preparation > .preparation:first-child input {
+    margin-bottom: 19px;
+}
+
+.item div#ingredients > .ingredient > input,
+.item div#preparation > .preparation > input {
+    margin-bottom: 10px;
+}
+
 .item input, .item textarea, .item select {
     width: 100%;
     outline: none;
@@ -448,7 +459,22 @@ button[type="submit"] {
 }
 
 .item select, select {
-    padding: 5px 15px;
+    width: 100%;
+    padding: 8px 16px;
+    box-shadow: 2px 2px 2px -4px rgba(63, 63, 63, .9);
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 16px;
+
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100%;
 }
 
 .item textarea {
@@ -462,13 +488,20 @@ button[type="submit"] {
     margin: 0 0 15px;
 }
 
-.add-ingredient, .add-preparation {
+.add-ingredient, 
+.add-preparation,
+.remove-ingredient,
+.remove-preparation {
     background: none;
     font-size: 16px;
     line-height: 19px;
     color: #6558C3;
     padding: 0;
     display: block;
+}
+
+.remove-ingredient, .remove-preparation {
+    margin-bottom: 5px;
 }
 
 #dash-list ul {
@@ -672,4 +705,73 @@ form .item #photos-preview .photo i {
 
 form .item #photos-preview .photo i:hover {
     opacity: 1;
+}
+
+form div.item > div.title {
+    font-family: Helvetica;
+    color: #111;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+div.box-images-recipes {
+    display: flex;
+    align-items: center;
+}
+
+div.box-images-recipes #photos-upload {
+    height: 150px;
+    width: 150px;
+}
+
+div.box-images-recipes div#photos-upload input[name="photos"] {
+    padding: 0;
+    width: 150px;
+}
+
+div.box-images-recipes div#photos-upload {
+    background: rgba(255,255,255, 0.7);
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    margin: 0px;
+}
+
+div.box-images-recipes div#photos-upload i {
+    font-size: 40px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+div.box-images-recipes #photos-preview {
+    grid-gap: 8px 8px;
+    margin: 8px 8px;
+    height: 150px;
+}
+
+@keyframes toRight {
+    from {
+        transform: translate(-50%, 0);
+        opacity: 0.1;
+    }
+
+    to {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+div.box-images-recipes #photos-preview .photo {
+    animation: toRight forwards 200ms ease-in-out;
+}
+
+div.box-images-recipes #photos-preview img {
+    width: 150px;
+    height: 150px;
+}
+
+div.box-images-recipes #photos-preview .photo i{
+    height: 150px;
 }

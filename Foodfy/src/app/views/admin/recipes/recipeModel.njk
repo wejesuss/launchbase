@@ -1,10 +1,37 @@
 <div class="item">
-    <div>Nome da receita *</div>
+    <div class="title">Imagem da receita</div>
+    <div class="box-images-recipes">
+        <div id="photos-upload">
+            <input type="file" 
+            name="photos" 
+            id="photos-input" 
+            accept="image/*"
+            multiple
+            onchange="PhotosUpload.apply('handleFileInputRecipes', event)"
+            >
+            <i class="material-icons">add_circle_outline</i>
+        </div>
+        <div id="photos-preview">
+            {% if file %}
+                    <div class="photo" id="{{file.id}}" style="animation: toRight forwards 200ms ease-in-out;">
+                        <img src="{{file.src}}" alt="{{file.name}}">
+                        <i class="material-icons" onclick="PhotosUpload.removePreviousPhoto(event)">
+                            close
+                        </i>
+                    </div>
+                <input type="hidden" name="removed_files">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="item">
+    <div class="title">Nome da receita</div>
     <input type="text" name="title" value="{{ recipe.title }}" required>
 </div>
 
 <div class="item">
-    <div>Nome do chef *</div>
+    <div class="title">Nome do chef</div>
     <select name="chef_id" required>
         <option value="">Selecione um Chef...</option>
         {% for chef in chefs %}
@@ -21,22 +48,22 @@
 </div>
 
 <div class="item">
-    <div>Imagem da receita *</div>
-    <input type="url" name="image" placeholder="https://" value="{{ recipe.image }}" required>
-</div>
-
-<div class="item">
-    <div>Ingredientes *</div>
+    <div class="title">Ingredientes</div>
     <div id="ingredients">
         {% if recipe.ingredients %}
             {% for ingredient in recipe.ingredients %}
             <div class="ingredient">
                 <input type="text" name="ingredients[]" value="{{ ingredient }}" required>
+                <button 
+                type="button" 
+                class="remove-ingredient"
+                onclick="removeInputField(event)"
+                >Apagar campo</button>
             </div>
             {% endfor %}
         {% else %}
             <div class="ingredient">
-            <input type="text" name="ingredients[]" value="" required>
+                <input type="text" name="ingredients[]" value="" required>
             </div>
         {% endif %}
     </div>
@@ -44,12 +71,17 @@
 </div>
 
 <div class="item">
-    <div>Modo de preparo *</div>
+    <div class="title">Modo de preparo</div>
     <div id="preparation">
         {% if recipe.preparation %}
             {% for preparation in recipe.preparation %}
             <div class="preparation">
                 <input type="text" name="preparation[]" value="{{ preparation }}" required>
+                <button 
+                type="button" 
+                class="remove-ingredient"
+                onclick="removeInputField(event)"
+                >Apagar campo</button>
             </div>
             {% endfor %}
         {% else %}
@@ -62,6 +94,6 @@
 </div>
 
 <div class="item">
-    <div>Informações adicionais</div>
+    <div class="title">Informações adicionais</div>
     <textarea name="information" placeholder="Informações adicionais">{{ recipe.information }}</textarea>
 </div>
