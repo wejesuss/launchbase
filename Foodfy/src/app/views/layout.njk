@@ -6,11 +6,15 @@
     {% block head %}
     <title>Foodfy</title>
     {% endblock %}
+    
+    <link rel="shortcut icon" href="\images\layouts\assets\Buffet-Steak.ico" type="image/x-icon">
 
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
-<body>
+<body style="display: flex; flex-direction: column; height: 100%;">
     <div class="wrapper">
         <header>
             <a href="/"><img src="/images\layouts\assets\logo.png" alt="logo_foodfy" /></a>
@@ -20,12 +24,9 @@
                     <a id="recipes" href="/recipes" rel="options">Receitas</a>
                     <a id="chefs" href="/chefs" rel="options">Chefs</a>
                 </div>
-                <div class="search">
-                    <form action="/recipes" method="get">
-                        <input type="text" name="filter" value="" placeholder="Nome da receita" style="margin-right : 5px; padding: 10px 15px">
-                        <button type="submit" style="height: 37px; width: 91px; padding-bottom: 30px;">Buscar</button>
-                    </form>
-                </div>
+                {% block search %}
+                    {% include 'parts/search.njk' %}
+                {% endblock search %}
             </div>
         </header>
     {% block header %}
@@ -37,9 +38,9 @@
 
     {% endblock content %}
     
-    <footer>
-        Todos direitos reservados, receitas Foodfy.
-    </footer>
+    {% block footer %}
+        {% include 'parts/footer.njk' %}
+    {% endblock footer %}
 
     <script src="/scripts.js"></script>
 </body>

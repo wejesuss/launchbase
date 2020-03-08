@@ -1,11 +1,28 @@
 const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
+const { addSrcToFilesArray } = require('../../utils/utils')
 
 exports.index = async function(req, res) {
     const url = req.path
+    
+    let { page, limit } = req.query
+    page = page || 1
+    limit = limit || 8
+    
+    let offset = limit * (page - 1)
+    const params = {limit, offset}
 
-    let results = await Chefs.all()
+    let results = await Chefs.paginate(params)
     const chefs = results.rows
+
+    let pagination
+    if(chefs[0]) {
+        pagination = {
+            total: Math.ceil(chefs[0].total / limit),
+            page,
+            limit
+        }
+    }
 
     const chefsPromise = chefs.map(async chef => {
         results = await ChefFiles.find(chef.file_id)
@@ -18,11 +35,10 @@ exports.index = async function(req, res) {
     await Promise.all(chefsPromise)
 
     if (url == '/admin/chefs') {
-        return res.render('admin/chefs/index', {chefs})
+        return res.render('admin/chefs/index', { chefs, pagination })
     } else {
-        return res.render('users/chefs', {chefs})
+        return res.render('users/chefs', { chefs, pagination })
     }
-
 }
 
 exports.create = function(req, res) {
@@ -67,16 +83,18 @@ exports.show = async function(req, res) {
 
     results = await Chefs.selectRecipesById(id)
     const recipes = results.rows
+    
+    const searchFilesPromise = recipes.map(recipe => ChefFiles.findRecipesFiles(recipe.id))
+    let files = await Promise.all(searchFilesPromise)
+    files = files.reduce((imagesArray, currentImage) => {
+        if(currentImage.rows[0]) imagesArray.push(currentImage.rows[0])
 
-    // const recipesPromise = recipes.map(async recipe => {
-    //     results = await ChefFiles.find(recipe.file_id)
-    //     const file = results.rows[0]
+        return imagesArray
+    }, [])
 
-    //     if(file)
-    //         recipe.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-    // })
+    files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
 
-    return res.render('admin/chefs/chef', { chef, recipes })
+    return res.render('admin/chefs/chef', { chef, recipes, files })
 }
 
 exports.edit = async function(req, res) {

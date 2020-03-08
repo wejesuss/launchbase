@@ -11,7 +11,7 @@ routes.get('/about', function(req, res) {
     return res.render('users/about')
 })
 routes.get('/recipes', users.list)
-routes.get('/recipes/:index', users.show)
+routes.get('/recipes/:id', users.show)
 
 routes.get('/chefs', chefs.index)
 

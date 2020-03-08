@@ -18,5 +18,11 @@
                 </div>
             </div>
         {% endfor %}
+        
     </main>
+    <div class="pagination"
+        data-page = {{pagination.page}}
+        data-total = {{pagination.total}}
+        data-limit = {{pagination.limit}}
+    ></div>
 {% endblock content %}

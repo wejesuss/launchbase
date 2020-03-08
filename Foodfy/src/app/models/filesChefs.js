@@ -26,6 +26,17 @@ module.exports = {
             console.error(err)
         }
     },
+    findRecipesFiles(recipe_id) {
+        try {
+            return db.query(`SELECT file_id AS id, recipe_id, files.name, files.path
+            FROM recipe_files
+            LEFT JOIN files ON (files.id = recipe_files.file_id)
+            WHERE recipe_files.recipe_id = ${recipe_id}
+            ORDER BY files.name`)
+        } catch (err) {
+            console.error(err)
+        }
+    },
     async delete(chef_id, id) {
         try {
             await db.query(`UPDATE chefs SET file_id = NULL WHERE id = ${chef_id}`)

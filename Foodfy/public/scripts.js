@@ -146,6 +146,42 @@ const PhotosUpload = {
     }
 }
 
+const ImageGallery = {
+    highlightImage: document.querySelector('.highlight > img'),
+    imagesPreview: document.querySelectorAll('.images-preview img'),
+    setImage(event) {
+        const { target } = event
+
+        ImageGallery.imagesPreview.forEach(preview => preview.classList.remove('active'))
+        target.classList.add('active')
+
+        ImageGallery.highlightImage.src = target.src
+        LightBox.image.src = target.src
+    },
+    doubleClick(event) {        
+        ImageGallery.setImage(event)
+        LightBox.open()
+    }
+}
+
+const LightBox = {
+    target: document.querySelector('.highlight .lightbox-target'),
+    image: document.querySelector('.highlight .lightbox-target img'),
+    closeButton: document.querySelector('.lightbox-target .lightbox-close'),
+    open() {
+        LightBox.target.style.opacity = 1
+        LightBox.target.style.top = 0
+        LightBox.target.style.bottom = 0
+        LightBox.closeButton.style.top = 0
+    },
+    close() {
+        LightBox.target.style.opacity = 0
+        LightBox.target.style.top = '-100%'
+        LightBox.target.style.bottom = 'initial'
+        LightBox.closeButton.style.top = '-80px'
+    }
+}
+
 //pagination
 function paginate(selectedPage, totalPages) {
     let pages = [],
@@ -180,6 +216,7 @@ const pagination = document.querySelector('.pagination')
 function createPagination(pagination) {
     const selectedPage = +pagination.dataset.page
     const total = +pagination.dataset.total
+    const limit = +pagination.dataset.limit
     const filter = pagination.dataset.filter
 
     const pages = paginate(selectedPage, total)
@@ -192,15 +229,15 @@ function createPagination(pagination) {
         } else {
             if (filter) {
                 if (page == selectedPage) {
-                    elements += `<a class="active" href="?page=${page}&&filter=${filter}">${page}</a>`
+                    elements += `<a class="active" href="?page=${page}&limit=${limit}&&filter=${filter}">${page}</a>`
                 } else {
-                    elements += `<a href="?page=${page}&&filter=${filter}">${page}</a>`
+                    elements += `<a href="?page=${page}&limit=${limit}&&filter=${filter}">${page}</a>`
                 }
             } else {
                 if (page == selectedPage) {
-                    elements += `<a class="active" href="?page=${page}">${page}</a>`
+                    elements += `<a class="active" href="?page=${page}&limit=${limit}">${page}</a>`
                 } else {
-                    elements += `<a href="?page=${page}">${page}</a>`
+                    elements += `<a href="?page=${page}&limit=${limit}">${page}</a>`
                 }
             }
         }
@@ -211,14 +248,6 @@ function createPagination(pagination) {
 
 if (pagination) {
     createPagination(pagination)
-}
-
-// add search field
-const search = document.querySelector('.menus .search')
-if (search) {
-    if (location.pathname.includes('/chefs') || location.pathname.includes('/about')) {
-        search.removeChild(search.querySelector('form'))
-    }
 }
 
 // show/hide

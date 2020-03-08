@@ -1,9 +1,4 @@
 module.exports = {
-    verifyFieldsOfArray(ArrayOfThings) {
-        for (const things of ArrayOfThings) {
-            if(things == "") return true
-        }
-    },
     date(timestamp) {
         const birthDate = new Date(timestamp)
 
@@ -16,5 +11,13 @@ module.exports = {
             birthDay:`${day}/${month}`,
             format:`${day}/${month}/${year}`
         }
+    },
+    addSrcToFilesArray(files, reqProtocol, reqHeadersHost) {
+        let filesWithSrc = files.map(file => ({ 
+            ...file,
+            src: `${reqProtocol}://${reqHeadersHost}${file.path.replace("public", "")}`
+        }))
+
+        return filesWithSrc
     }
 }

@@ -12,13 +12,15 @@
             <i class="material-icons">add_circle_outline</i>
         </div>
         <div id="photos-preview">
-            {% if file %}
+            {% if files %}
+                {% for file in files %}
                     <div class="photo" id="{{file.id}}" style="animation: toRight forwards 200ms ease-in-out;">
                         <img src="{{file.src}}" alt="{{file.name}}">
                         <i class="material-icons" onclick="PhotosUpload.removePreviousPhoto(event)">
                             close
                         </i>
                     </div>
+                {% endfor %}
                 <input type="hidden" name="removed_files">
             {% endif %}
         </div>
@@ -54,11 +56,13 @@
             {% for ingredient in recipe.ingredients %}
             <div class="ingredient">
                 <input type="text" name="ingredients[]" value="{{ ingredient }}" required>
+                {% if not loop.index0 == 0 %}
                 <button 
                 type="button" 
                 class="remove-ingredient"
                 onclick="removeInputField(event)"
                 >Apagar campo</button>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}
@@ -77,11 +81,13 @@
             {% for preparation in recipe.preparation %}
             <div class="preparation">
                 <input type="text" name="preparation[]" value="{{ preparation }}" required>
+                {% if not loop.index0 == 0 %}
                 <button 
                 type="button" 
-                class="remove-ingredient"
+                class="remove-preparation"
                 onclick="removeInputField(event)"
                 >Apagar campo</button>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}

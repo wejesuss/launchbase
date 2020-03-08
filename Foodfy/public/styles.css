@@ -60,7 +60,7 @@ header {
 }
 
 .presentation {
-    width: 316px;
+    width: 460px;
     align-self: center;
     padding-left: 60px;
 }
@@ -92,7 +92,6 @@ header {
 main {
     width: 940px;
     margin: 50px auto;
-    min-height: 40vh;
 }
 
 main section h2 {
@@ -186,7 +185,7 @@ div.recipe {
 }
 
 .recipe-header h2{
-    margin-top: 50px;
+    margin-top: -8px;
     font-size: 36px;
     color: #111111;
     line-height: 42px;
@@ -197,7 +196,7 @@ div.recipe {
 }
 
 .recipe-header p{
-    margin: 4px 0 60px;
+    margin: 4px 0 30px;
     font-size: 20px;
     color: #777777;
     line-height: 24px;
@@ -434,7 +433,16 @@ button[type="submit"] {
     line-height: 19px;
 }
 
-.item div#ingredients > .ingredient:first-child input,
+.item div#ingredients > .ingredient + .ingredient,
+.item div#preparation > .preparation + .preparation {
+    display: flex;
+    flex-direction: column;
+}
+
+.ingredient > button, .preparation > button {
+    align-self: flex-end;
+}
+
 .item div#preparation > .preparation:first-child input {
     margin-bottom: 19px;
 }
@@ -601,7 +609,7 @@ div.create-box {
 .pagination {
     width: 940px;
     text-align: center;
-    margin-top: 100px;
+    margin: 100px auto 0;
 }
 
 .pagination a, .pagination span {
@@ -749,6 +757,7 @@ div.box-images-recipes #photos-preview {
     grid-gap: 8px 8px;
     margin: 8px 8px;
     height: 150px;
+    grid-template-columns: repeat(5, 1fr);
 }
 
 @keyframes toRight {
@@ -774,4 +783,83 @@ div.box-images-recipes #photos-preview img {
 
 div.box-images-recipes #photos-preview .photo i{
     height: 150px;
+}
+
+.highlight > img {
+    box-shadow: 4px 4px 4px -4px rgb(44, 43, 43);
+    cursor: zoom-in;
+}
+
+.images-preview {
+    width: 100%;
+    height: 50px;
+    margin-top: 8px;
+
+    display: grid;
+    align-items: center;
+    justify-content: right;
+    grid-gap: 8px 10px;
+}
+
+.images-preview .photo {
+    width: 50px;
+    height: 50px;
+}
+
+.images-preview .photo img {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    border-radius: 4px;
+    border: 1px solid #DDDDDD;
+    opacity: 0.5;
+
+    object-fit: cover;
+    object-position: center center;
+    cursor: pointer;
+}
+
+.images-preview .photo img:hover,
+.images-preview .photo img.active {
+    opacity: 1;
+}
+
+.recipe .highlight .lightbox-target {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    z-index: 100;
+    left: 0;
+    top: -100%;
+    opacity: 0;
+    transition: opacity 400ms;
+}
+
+.recipe .highlight .lightbox-target img {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    object-fit: contain;
+    width: 90%;
+    height: 90%;
+}
+
+.recipe .highlight .lightbox-close {
+    position: absolute;
+    width:  50px;
+    height: 50px;
+    background: white;
+    right: 0;
+    top: -80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 400ms;
 }

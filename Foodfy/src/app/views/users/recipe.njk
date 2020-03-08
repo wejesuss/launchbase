@@ -7,12 +7,45 @@
 
 {% block content %}
     <div class="recipe">
-
         <div class="recipe-header">
-            <img src="{{recipe.image}}" alt="{{recipe.title}}">
+            <div>
+                <div class="highlight">
+                {% if not files[0] %}
+                    <img src="https://placehold.it/940x280?text=Receita sem foto" alt="sem foto">
+                {% else %}
+                    <img 
+                    src="{{files[0].src}}" 
+                    alt="{{files[0].name}}"
+                    onclick="LightBox.open()"
+                    >
+                {% endif %}
+                    <div class="lightbox-target">
+                        <img src="{{files[0].src}}" alt="{{files[0].name}}"/>
+                        <a href="#" class="lightbox-close"
+                        onclick="LightBox.close()"
+                        >
+                            <i class="material-icons">close</i>
+                        </a>
+                    </div>
+                </div>
+                <div class="images-preview" style="grid-template-columns: repeat({{files.length}}, 50px);">
+                    {% for file in files %}
+                    <div class="photo">
+                        <img 
+                        src="{{file.src}}" 
+                        alt="{{file.name}}"
+                        {% if loop.index0 == 0 %}
+                        class="active"
+                        {% endif %}
+                        onclick="ImageGallery.setImage(event)"
+                        ondblclick="ImageGallery.doubleClick(event)"
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
             <h2>{{recipe.title}}</h2>
-            <p>por
-                {{recipe.chef_name}}</p>
+            <p>por {{recipe.chef_name}}</p>
         </div>
 
         <div class="recipe-content">

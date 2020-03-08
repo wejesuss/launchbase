@@ -8,11 +8,12 @@
     <section id="box">
         <h3>Gerenciar receitas</h3>
         {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
-        {{ loadRecipes(recipes) }}
+        {{ loadRecipes(recipes, files) }}
         
         <div class="pagination"
             data-page = {{pagination.page}}
             data-total = {{pagination.total}}
+            data-limit = {{pagination.limit}}
             data-filter = {{filter}}
         >
         </div>

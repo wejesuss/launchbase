@@ -1,5 +1,4 @@
 const db = require('../../config/db')
-const { date } = require('../../utils/utils')
 
 module.exports = {
     all() {
@@ -62,7 +61,6 @@ module.exports = {
                 file_id = ($2)
             WHERE id = $3
             `
-
             const values = [
                 name,
                 file_id,
@@ -79,6 +77,28 @@ module.exports = {
             return db.query(`DELETE FROM chefs WHERE id = $1`, [id])
         } catch (error) {
             console.error(error)
+        }
+    },
+    paginate(params) {
+        try {
+            const { limit, offset } = params
+
+            let query = "",
+                orderBy = `ORDER BY total_recipes DESC`,
+                totalQuery = `SELECT chefs.*, count(recipes) AS total_recipes, (
+                    SELECT count(*) FROM recipes
+                ) AS total`
+
+            query = `${totalQuery}, chefs.name as chef_name
+            FROM chefs
+            LEFT JOIN recipes ON (recipes.chef_id = chefs.id)
+            GROUP BY chefs.id
+            ${orderBy} LIMIT $1 OFFSET $2
+            `
+
+            return db.query(query, [limit, offset])
+        } catch (err) {
+            console.error(err)
         }
     }
 }

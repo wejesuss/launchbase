@@ -17,7 +17,11 @@
         <div class="recipes">
             {% for recipe in recipes %}
                 <div class="card">
-                    <a href="/recipes/{{recipe.id}}"><img src="{{recipe.image}}" alt="{{recipe.title}}"></a>
+                    {% for file in files %}
+                    {% if recipe.id == file.recipe_id %}
+                        <a href="/recipes/{{recipe.id}}"><img src="{{ file.src }}" alt="{{ file.name }}"></a>
+                    {% endif %}
+                    {% endfor %}
                     <h5>{{recipe.title}}</h5>
                     <p>por {{recipe.chef_name}}</p>
                 </div>

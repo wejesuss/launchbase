@@ -18,7 +18,7 @@
     <section id="box">
         <h3>Receitas</h3>
         {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
-        {{loadRecipes(recipes)}}
+        {{loadRecipes(recipes, files)}}
         {% if recipes == '' %}
             <h3>Não possui</h3>
         {% endif %}
