@@ -70,8 +70,9 @@ function getLessTransactionByType(type) {
 
 createTransaction({ type: 'credit', value: 50 })
 createTransaction({ type: 'credit', value: 120 })
+createTransaction({ type: 'debit', value: 60 })
+createTransaction({ type: 'debit', value: 60 })
 createTransaction({ type: 'debit', value: 80 })
-createTransaction({ type: 'debit', value: 30 })
 
 
 getHigherTransactionByType('credit') // { type: 'credit', value: 120 }

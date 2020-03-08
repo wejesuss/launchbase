@@ -4,8 +4,8 @@ const usuarios = [
     { nome: 'Tuane', tecnologias: ['HTML', 'Node.js'] }
 ]
 function checaSeUsuarioUsaCSS(usuario) {
-    for (let a of usuario.tecnologias) {
-        if (a == 'CSS') {
+    for (let index = 0; index < usuario.tecnologias.length; index++) {
+        if (usuario.tecnologias[index] == 'CSS') {
             return true
         }
     }
