@@ -23,13 +23,32 @@ const PhotosUpload = {
         const { files: fileList } = event.target
         PhotosUpload.input = event.target
         
+        const photosHasId = []
+        Array.from(this.preview.childNodes).forEach(item => {
+            if(item.classList && item.classList.value == 'photo' && item.getAttribute('id')) {
+                const alt = item.querySelector('img').alt
+                const index = alt.indexOf('-')
+                photosHasId.push(alt.slice(index + 1))
+            }
+        })
+
         if(PhotosUpload.hasLimit(event)) {
             PhotosUpload.updateInputFiles()
             return
         }
 
         Array.from(fileList).forEach(file => {
-            PhotosUpload.files.push(file)
+            const alreadyHasImage = PhotosUpload.files.some(image => image.name == file.name)
+            const alreadyHadImage = photosHasId.some(name => name == file.name)
+
+            if(!alreadyHasImage && !alreadyHadImage) {
+                PhotosUpload.files.push(file)
+            } else {
+                alert(`Não envie fotos repetidas!`)
+                PhotosUpload.updateInputFiles()
+                event.preventDefault()
+                return
+            }
             
             const reader = new FileReader()
             
@@ -83,8 +102,6 @@ const PhotosUpload = {
         const div = document.createElement('div')
         div.classList.add('photo')
 
-        div.onclick = PhotosUpload.removePhoto
-        
         div.appendChild(image)
         div.appendChild(PhotosUpload.getRemoveButton())
 
@@ -92,6 +109,7 @@ const PhotosUpload = {
     },
     getRemoveButton() {
         const button = document.createElement('i')
+        button.onclick = PhotosUpload.removePhoto
         button.classList.add('material-icons')
         button.innerHTML = 'close'
         
