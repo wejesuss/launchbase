@@ -146,10 +146,8 @@ $RECYCLE.BIN/
 
 # Config files
 mailer.js
-!lib/
-config/db.js
+lib/mailer.js
 config/session.js
-!config/
 
 
 # End of https://www.gitignore.io/api/node,windows,visualstudiocode
