@@ -1,0 +1,27 @@
+@keyframes hideMessage {
+    to {
+        top: -50%;
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.messages {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    position: absolute;
+    width: 100%;
+    color: white;
+    top: 0;
+    opacity: 1;
+    animation: hideMessage 400ms 5s ease-out forwards;
+}
+
+.messages.error {
+    background-color: #e74c3c;
+}
+
+.messages.success {
+    background-color: rgb(137, 214, 20);
+}
