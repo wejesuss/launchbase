@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    {% block head %}
+    <title>Login</title>
+    {% endblock %}
+    <link rel="shortcut icon" href="\images\layouts\assets\Buffet-Steak.ico" type="image/x-icon">
+
+    {% include 'parts/imports.njk' %}
+</head>
+
+<body>
+    {% include "parts/messages.njk" %}
+    
+    <div class="login-box container">
+    <div class="header-login">
+        <div class="logo">
+            <a href="/admin/"><img src="/images\layouts\assets\logo.png" alt="logo_foodfy" /></a>
+        </div>
+
+        {% block header %}
+
+        {% endblock header %}
+    </div>
+
+    {% block content %}
+
+    {% endblock content %}
+    </div>
+
+    <script src="/scripts.js"></script>
+</body>
+
+</html>

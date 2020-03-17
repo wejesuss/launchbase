@@ -1,6 +1,6 @@
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
-const { addSrcToFilesArray } = require('../../utils/utils')
+const { addSrcToFilesArray } = require('../../lib/utils')
 
 exports.index = async function(req, res) {
     let { page, limit } = req.query

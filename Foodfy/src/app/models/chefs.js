@@ -86,7 +86,7 @@ module.exports = {
             let query = "",
                 orderBy = `ORDER BY total_recipes DESC`,
                 totalQuery = `SELECT chefs.*, count(recipes) AS total_recipes, (
-                    SELECT count(*) FROM recipes
+                    SELECT count(*) FROM chefs
                 ) AS total`
 
             query = `${totalQuery}, chefs.name as chef_name

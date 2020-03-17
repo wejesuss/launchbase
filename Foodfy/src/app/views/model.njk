@@ -5,26 +5,16 @@
     {% block head %}
         <title>Receitas</title>
     {% endblock head %}
-
     <link rel="shortcut icon" href="\images\layouts\assets\Fruits-Strawberries.ico" type="image/x-icon">
-
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <meta charset="UTF-8"> 
+    
+    {% include 'parts/imports.njk' %}
     </head>
 
     <body>
+    {% include "parts/messages.njk" %}
+    
     <div class="header">
-            <div class="links">
-                <div class="logo">
-                    <a href="/admin/recipes"><img src="/images/layouts/assets/white-logo.png" alt="logo_foodfy"/></a>
-                </div>
-                <div class="links-header menus">
-                    <a class="link" href="/admin/recipes">Receitas</a>
-                    <a class="link" href="/admin/chefs">Chefs</a>
-                </div>
-            </div>
+        {% include 'parts/header-admin.njk' %}
     </div>
 
     {% block content %}

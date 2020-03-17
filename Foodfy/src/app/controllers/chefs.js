@@ -1,10 +1,8 @@
 const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
-const { addSrcToFilesArray } = require('../../utils/utils')
+const { addSrcToFilesArray } = require('../../lib/utils')
 
 exports.index = async function(req, res) {
-    const url = req.path
-    
     let { page, limit } = req.query
     page = page || 1
     limit = limit || 8
@@ -34,11 +32,7 @@ exports.index = async function(req, res) {
     
     await Promise.all(chefsPromise)
 
-    if (url == '/admin/chefs') {
-        return res.render('admin/chefs/index', { chefs, pagination })
-    } else {
-        return res.render('users/chefs', { chefs, pagination })
-    }
+    return res.render('admin/chefs/index', { chefs, pagination })
 }
 
 exports.create = function(req, res) {

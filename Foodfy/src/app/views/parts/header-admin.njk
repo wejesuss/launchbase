@@ -1,0 +1,18 @@
+<div class="wrapper">
+<div class="links">
+    <div class="logo">
+        <a href="/admin/recipes"><img src="/images/layouts/assets/white-logo.png" alt="logo_foodfy"/></a>
+    </div>
+    <div class="links-header menus">
+        <a class="link" href="/admin/recipes">Receitas</a>
+        <a class="link" href="/admin/chefs">Chefs</a>
+        <a class="link" href="/admin/users">Usuários</a>
+        
+    </div>
+</div>
+{% if session.userId %}
+<form action="/admin/users/logout" method="post">
+    <a href="#"><button class="link" href="/admin/users">Sair</button></a>
+</form>
+{% endif %}
+</div>

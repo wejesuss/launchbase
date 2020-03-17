@@ -1,3 +1,45 @@
+// Validators
+const Validate = {
+    apply(input, func) {
+        Validate.clearErrors(input)
+        let results = Validate[func](input.value)
+        input.value = results.value
+
+        if(results.error) Validate.displayErrors(input)
+    },
+    displayErrors(input) {
+        input.classList.add("error")
+        input.focus()
+    },
+    clearErrors(input) {
+        input.classList.remove("error")        
+    },
+    isEmail(value) {
+        let error = null
+
+        const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+
+        console.log(value.match(emailFormat))
+        if(!value.match(emailFormat)) error = "Email inválido"
+
+        return {
+            error,
+            value
+        }
+    },
+    isInvalid(event) {
+        const invalidInputs = document.querySelectorAll(".input input")
+        
+        invalidInputs.forEach(input => {
+            if(input.classList.contains("error")) {
+                event.preventDefault()
+                alert(`O campo ${input.name} com o valor ${input.value} é inválido!`)
+            }
+        })
+    }
+}
+
+
 const PhotosUpload = {
     uploadLimit: 5,
     input: "",
@@ -287,4 +329,12 @@ if (formDelete) {
 
         if (!confirmation) e.preventDefault();
     })
+}
+
+const ValiteDelete = {
+    formDelete(event) {
+        const confirmation = confirm("Deseja mesmo deletar?");
+        
+        if (!confirmation) event.preventDefault();
+    }
 }
