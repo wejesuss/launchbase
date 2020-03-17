@@ -1,0 +1,28 @@
+{% extends "layout.njk" %}
+
+{% block head %}
+  <title>Courses Details</title>
+{% endblock %}
+
+{% block content %}
+
+  <section class="courses">
+
+      <div class="card" id="{{item.id}}">
+        <div class="card-image">
+          <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.xt5W32VT5GRjRcWdzrxcJQHaH_%26pid%3DApi%26h%3D160&f=1" alt="">
+        </div>
+
+        <div class="card-content">
+          <h1>{{item.id}}</h1>
+        </div>
+
+        <div class="card-info">
+          <p>{{item.modules}}</p>
+          <p class="card-price">{{item.price}}</p>
+          
+        </div>
+      </div>
+
+    </section>
+  {% endblock %}
