@@ -8,6 +8,10 @@
         placeholder="Digite o seu Email" 
         value="{{ user.email }}"
         onblur="Validate.apply(this, 'isEmail')"
+        onkeydown="Validate.clearBorderError(this)"
+        {% if error %}
+            class="red"
+        {% endif %}
         >
     </div>
 </div>
@@ -19,7 +23,11 @@
         required
         type="password" 
         name="password"
-        placeholder="Digite sua senha" 
+        placeholder="Digite sua senha"
+        onkeydown="Validate.clearBorderError(this)"
+        {% if error %}
+            class="red"
+        {% endif %}
         >
     </div>
 </div>

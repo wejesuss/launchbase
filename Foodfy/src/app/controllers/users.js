@@ -7,7 +7,7 @@ function checkAllFields(body) {
     const keys = Object.keys(body)
 
     for (const key of keys) {
-        if (body[key] == "" && key != "file_id" &&  key != "removed_files") {
+        if (body[key] == "") {
             return {
                 user: body,
                 error: "Por favor preencha todos os campos."
@@ -16,10 +16,8 @@ function checkAllFields(body) {
     }
 }
 
-async function renderPaginate(page, limit) {
-    page = page
-    limit = limit
-    
+async function renderPaginate(page, limit) {    
+   
     let offset = limit * (page - 1)
     const params = {limit, offset}
 
@@ -50,14 +48,12 @@ async function verifyUserIsAdmin(userId) {
 }
 
 exports.index = async function(req, res) {
-    if(!req.session.userId) return res.render("admin/isAdmin/user", {
+    if(!req.session.userId) return res.render("session/login", {
         error: "Você não pode acessar!"
     })
         
     const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-    if((userIsAdmin && userIsAdmin.isPrincipal == false) || !userIsAdmin) return res.render("admin/isAdmin/user", {
-        error: "Você não pode acessar2!"
-    })
+    if(!userIsAdmin) return res.redirect("/admin/")
 
     let { page, limit } = req.query
     page = page || 1
@@ -80,25 +76,21 @@ exports.index = async function(req, res) {
         return res.render('admin/isAdmin/listUsers', { users, pagination })
     } catch (err) {
         console.log(err)
-        return res.redirect("/admin/recipes/")
+        return res.redirect("/admin/")
     }
 }
 
 exports.registerForm = async function(req, res) {
     try {
-        if(!req.session.userId) return res.redirect("/admin/users/")
+        if(!req.session.userId) return res.redirect("/users/login/")
         
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-        if((userIsAdmin && userIsAdmin.isPrincipal == false) || !userIsAdmin) return res.render("admin/isAdmin/user", {
-            error: "Você não pode acessar2!"
-        })
+        if(!userIsAdmin) return res.redirect("/admin/")
 
         return res.render('admin/isAdmin/register')   
     } catch (err) {
         console.error(err)
-        return res.render("admin/isAdmin/user", {
-            error: "Você não pode acessar2!"
-        })
+        return res.redirect("/admin/")
     }
 }
 
@@ -160,18 +152,26 @@ exports.post = async function(req, res) {
 exports.show = async function(req, res) {
     const { id } = req.params
     try {
-        if(!req.session.userId) return res.redirect("/admin/users/register/")
+        if(!req.session.userId) return res.redirect("/users/login/")
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-        if((userIsAdmin && userIsAdmin.isPrincipal == false) || !userIsAdmin) return res.redirect("/admin/users/register/")
-
+        if(!userIsAdmin) return res.redirect("/admin/")
+    
         const user = await User.find({ where: {id} })
-        
+    
         const {users, pagination} = await renderPaginate(1, 6)
         if (!user) return res.render("admin/isAdmin/listUsers", {
             users,
             pagination,
             error: "Usuário não encontrado!"
         })
+
+        if(userIsAdmin.isPrincipal == false && (user.is_admin == true && user.id != req.session.userId)) {
+            return res.render("admin/isAdmin/listUsers", { 
+                users,
+                pagination,
+                error: "Nao pode alterar este usuário!"
+            })
+        }
 
         return res.render("admin/isAdmin/user", { 
             user
@@ -188,27 +188,34 @@ exports.put = async function(req, res) {
     try {
         if(!req.session.userId) return res.redirect("/admin/users/register/")
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-        if((userIsAdmin && userIsAdmin.isPrincipal == false) || !userIsAdmin) return res.redirect("/admin/users/register/")
+        if(!userIsAdmin) return res.redirect("/admin/")
+
+        if(userIsAdmin.isPrincipal == false && req.body.id == 1) return res.redirect("/admin/users")
 
         const checkedFields = checkAllFields(req.body)
         if(checkedFields) return res.render("admin/isAdmin/user", { checkedFields })
     
-        if(!req.body.is_admin && req.body.id != 1) {
-            req.body.is_admin = false
-        } else {
-            req.body.is_admin = true
-        }
+        const user = await User.find({ where: {id: req.body.id} })
         
-        let { id, name, email, is_admin } = req.body
+        let isAdmin = false
+        if(!req.body.is_admin && userIsAdmin.isPrincipal == true) isAdmin = false
+        if(!req.body.is_admin && user.id == req.session.userId) isAdmin = true
+        if(user.is_admin == true && userIsAdmin.isPrincipal == false) isAdmin = true
+        if(req.body.is_admin) isAdmin = true
+        
+        req.body.is_admin = isAdmin
 
+        let { id, name, email, is_admin } = req.body
         await User.update(id, {
             name,
             email,
             is_admin
         })
 
-        return res.render("admin/isAdmin/user", {
-            user: req.body,
+        const {users, pagination} = await renderPaginate(1, 6)
+        return res.render("admin/isAdmin/listUsers", {
+            users,
+            pagination,
             success: "Usuário atualizado com sucesso!"
         })
     } catch (err) {
@@ -223,17 +230,23 @@ exports.delete = async function(req, res) {
     try {
         if(!req.session.userId) return res.redirect("/admin/users/register/")
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-        if((userIsAdmin && userIsAdmin.isPrincipal == false) || !userIsAdmin) return res.redirect("/admin/users/register/")
+        if(!userIsAdmin) return res.redirect("/admin/users/")
 
         let {users, pagination} = await renderPaginate(1, 6)
 
         const userToBeDelete = await verifyUserIsAdmin(req.body.id)
-        if(userToBeDelete && userToBeDelete.isPrincipal == true) {
-            return res.render("admin/isAdmin/listUsers", {
-                users,
-                pagination,
-                error: "Esta conta não pode ser deletada!"
-            })
+
+        console.log((userToBeDelete && userToBeDelete.isAdmin == true && userIsAdmin.isPrincipal == false), userToBeDelete)
+        console.log(req.session.userId == req.body.id, req.body.id, req.session.userId)
+
+        if((userToBeDelete && userToBeDelete.isAdmin == true && 
+            userIsAdmin.isPrincipal == false) || 
+            req.session.userId == req.body.id) {
+                return res.render("admin/isAdmin/listUsers", {
+                    users,
+                    pagination,
+                    error: "Esta conta não pode ser deletada!"
+                })
         }
         
         const index = users.findIndex(user => {

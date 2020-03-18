@@ -18,9 +18,9 @@
                 </div>
                 <div class="user-actions">
                     <a href="/admin/users/edit/{{ user.id }}">Editar</a>
-                    <button type="submit" form="delete-user">Remover</button>
+                    <button type="submit" form="{{loop.index0}}">Remover</button>
                 </div>
-                <form action="/admin/users?_method=DELETE" method="post" id="delete-user" onsubmit="ValiteDelete.formDelete(event)">
+                <form action="/admin/users?_method=DELETE" method="post" id="{{loop.index0}}" onsubmit="ValiteDelete.formDelete(event)">
                     <input type="hidden" name="id" value="{{user.id}}">
                 </form>
             </div>

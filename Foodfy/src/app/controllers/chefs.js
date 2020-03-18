@@ -1,6 +1,39 @@
 const Chefs = require('../models/chefs')
+const User = require('../models/users')
 const ChefFiles = require('../models/filesChefs')
 const { addSrcToFilesArray } = require('../../lib/utils')
+
+function checkAllFields(body) {
+    const keys = Object.keys(body)
+
+    for (const key of keys) {
+        if (body[key] == "" && key != "file_id" &&  key != "removed_files") {
+            return {
+                user: body,
+                error: "Por favor preencha todos os campos."
+            }
+        }
+    }
+}
+
+async function loadPaginate(page, limit) {
+    
+    let offset = limit * (page - 1)
+    const params = {limit, offset}
+
+    const chefs = await Chefs.paginate(params)
+
+    let pagination
+    if(chefs[0]) {
+        pagination = {
+            total: Math.ceil(chefs[0].total / limit),
+            page,
+            limit
+        }
+    }
+
+    return { chefs, pagination }
+}
 
 exports.index = async function(req, res) {
     let { page, limit } = req.query
@@ -10,8 +43,7 @@ exports.index = async function(req, res) {
     let offset = limit * (page - 1)
     const params = {limit, offset}
 
-    let results = await Chefs.paginate(params)
-    const chefs = results.rows
+    const chefs = await Chefs.paginate(params)
 
     let pagination
     if(chefs[0]) {
@@ -23,8 +55,7 @@ exports.index = async function(req, res) {
     }
 
     const chefsPromise = chefs.map(async chef => {
-        results = await ChefFiles.find(chef.file_id)
-        const file = results.rows[0]
+        const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
 
         if(file)
             chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
@@ -40,43 +71,62 @@ exports.create = function(req, res) {
 }
 
 exports.post = async function(req, res) {
-    const keys = Object.keys(req.body)
-    
-    for (const key of keys) {
-        if (req.body[key] == "") {
-            return res.send("Please, fill in all fields")
+    try {
+        const checkedFields = checkAllFields(req.body)
+        if(checkedFields) return res.render("admin/chefs/create", { checkedFields })
+
+        if(!req.file) return res.render("admin/chefs/create", {
+            chef: req.body,
+            error: "Mande uma imagem por favor!"
+        })
+
+        const fileId = await ChefFiles.create({...req.file})
+
+        if(fileId) {
+            const chefId = await Chefs.create(req.body.name, fileId)
+            
+            return res.redirect(`/admin/chefs/${chefId}`)
         }
-    }
-
-    if(!req.file) return res.send("Please send one image!")
-    
-    let results = await ChefFiles.create({...req.file})
-    const fileId = results.rows[0].id
-
-    if(fileId) {
-        results = await Chefs.create(req.body.name, fileId)
-        const chefId = results.rows[0].id
-        
-        return res.redirect(`/admin/chefs/${chefId}`)
+    } catch (err) {
+        console.error(err)
+        return res.render("admin/chefs/create", {
+            chef: req.body,
+            error: "Algum erro ocorreu, tente novamente!"
+        })
     }
 }
 
 exports.show = async function(req, res) {
     const { id } = req.params
-    
-    let results = await Chefs.find(id)
-    const chef = results.rows[0]
-    
-    if (!chef) return res.send("Chef not found!")
+    const { userId } = req.session
 
-    results = await ChefFiles.find(chef.file_id)
-    const file = results.rows[0]
+    if (!userId) 
+        return res.redirect("/users/login")
+
+    const chef = await Chefs.find(id)
+    
+    let {chefs, pagination} = await loadPaginate(1, 8)
+    const chefsPromise = chefs.map(async chef => {
+        const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+
+        if(file)
+            chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+    })
+    
+    await Promise.all(chefsPromise)
+
+    if (!chef) return res.render("admin/chefs/index", {
+        chefs,
+        pagination,
+        error: "Chefe não encontrado!"
+    })
+
+    const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
 
     if(file)
         chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
 
-    results = await Chefs.selectRecipesById(id)
-    const recipes = results.rows
+    const recipes = await Chefs.selectRecipesById(id)
     
     const searchFilesPromise = recipes.map(recipe => ChefFiles.findRecipesFiles(recipe.id))
     let files = await Promise.all(searchFilesPromise)
@@ -94,13 +144,25 @@ exports.show = async function(req, res) {
 exports.edit = async function(req, res) {
     const { id } = req.params
     
-    let results = await Chefs.find(id)
-    const chef = results.rows[0]
+    const chef = await Chefs.find(id)
     
-    if (!chef) return res.send("Chef not found!")
+    let {chefs, pagination} = await loadPaginate(1, 8)
+    const chefsPromise = chefs.map(async chef => {
+        const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
 
-    results = await ChefFiles.find(chef.file_id)
-    const file = results.rows[0]
+        if(file)
+            chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+    })
+    
+    await Promise.all(chefsPromise)
+
+    if (!chef) return res.render("admin/chefs/index", {
+        chefs,
+        pagination,
+        error: "Chefe não encontrado!"
+    })
+
+    const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
     
     if(file)
         file.src = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
@@ -109,13 +171,8 @@ exports.edit = async function(req, res) {
 }
 
 exports.put = async function(req, res) {
-    const keys = Object.keys(req.body)
-    
-    for (const key of keys) {
-        if (req.body[key] == "" && key != "file_id" &&  key != "removed_files") {
-            return res.send("Please, fill in all fields")
-        }
-    }
+    const checkedFields = checkAllFields(req.body)
+    if(checkedFields) return res.render("admin/chefs/edit", { checkedFields })
 
     if(req.body.removed_files) {
         const removed_files = req.body.removed_files.split(',')
@@ -130,12 +187,11 @@ exports.put = async function(req, res) {
     }
     
     if (req.body.file_id == '') req.body.file_id = null
-    const oldFile = (await ChefFiles.find(req.body.file_id)).rows.length
+    const file = await ChefFiles.find({ where: {file_id: req.body.file_id} })
 
     let fileId
-    if(oldFile < 1 && req.file) {
-        let results = await ChefFiles.create({...req.file})
-        fileId = results.rows[0].id
+    if(!file && req.file) {
+        fileId = await ChefFiles.create({...req.file})
     }
     
     if(!fileId) fileId = req.body.file_id
@@ -148,19 +204,34 @@ exports.put = async function(req, res) {
 exports.delete = async function(req, res) {
     const { id: chef_id, file_id } = req.body
 
-    let results = await Chefs.selectRecipesById(chef_id)
-    const recipes = results.rows[0]
+    const recipes = await Chefs.selectRecipesById(chef_id)
     
-    if(recipes)
-        return res.send("Unable to exclude chefs with at least one recipe")
-    else {
+    if(recipes[0]) {
+        return res.render("admin/chefs/edit", {
+            chef: req.body,
+            error: "Não pode excluir chefes que possuem receitas!"
+        })
+    } else {
         if(file_id == '') file_id = null
 
         await ChefFiles.delete(chef_id, file_id)
 
         await Chefs.delete(chef_id)
 
-        return res.redirect('/admin/chefs')
-    }
+        let {chefs, pagination} = await loadPaginate(1, 8)
+        const chefsPromise = chefs.map(async chef => {
+            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
     
+            if(file)
+                chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+        })
+        
+        await Promise.all(chefsPromise)
+
+        return res.render("admin/chefs/index", {
+            chefs,
+            pagination,
+            success: "Chefe deletado com sucesso!"
+        })
+    }
 }

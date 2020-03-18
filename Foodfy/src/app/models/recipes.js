@@ -1,22 +1,35 @@
 const db = require('../../config/db')
 
 module.exports = {
-    findByLimit(limit) {
+    async findByLimit(limit) {
         try {
-            return db.query(`SELECT recipes.*, chefs.name as chef_name
+            let results = await db.query(`SELECT recipes.*, chefs.name as chef_name
             FROM recipes
             LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
-            ORDER BY created_at DESC LIMIT ${limit}`)   
+            ORDER BY created_at DESC LIMIT ${limit}`)
+
+            return results.rows
         } catch (err) {
             console.error(err)
         }
     },
-    find(id) {
+    async find(filters) {
         try {
-            return db.query(`SELECT recipes.*, chefs.name as chef_name
+            let query = `SELECT recipes.*, chefs.name as chef_name
             FROM recipes
-            LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
-            WHERE recipes.id = ${id}`)
+            LEFT JOIN chefs ON (chefs.id = recipes.chef_id)`
+
+            Object.keys(filters).map(key => {
+                query = `${query} ${key}`
+                
+                Object.keys(filters[key]).map(filter => {
+                    query = `${query} recipes.${filter} = '${filters[key][filter]}' `
+                })
+            })
+            
+            let results = await db.query(query)
+            
+            return results.rows[0]
         } catch (err) {
             console.error(err)
         }
@@ -34,8 +47,9 @@ module.exports = {
                 chef_id,
                 ingredients,
                 preparation,
-                information
-            ) VALUES ($1, $2, $3, $4, $5)
+                information,
+                user_id
+            ) VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
             `
             const values = [
@@ -43,7 +57,8 @@ module.exports = {
                 data.chef_id,
                 data.ingredients,
                 data.preparation,
-                data.information
+                data.information,
+                data.user_id
             ]
 
             return db.query(query, values)
@@ -51,9 +66,11 @@ module.exports = {
             console.error(err)
         }
     },
-    recipeSelectOptions() {
+    async recipeSelectOptions() {
         try {
-            return db.query(`SELECT chefs.name, chefs.id FROM chefs`)
+          let results = await db.query(`SELECT chefs.name, chefs.id FROM chefs`)
+
+          return results.rows
         } catch (err) {
             console.error(err)
         }
@@ -96,7 +113,7 @@ module.exports = {
             console.error(error)
         }
     },
-    paginate(params) {
+    async paginate(params) {
         try {
             const { filter, limit, offset } = params
 
@@ -124,8 +141,9 @@ module.exports = {
                 ${filterQuery}
                 ${orderBy} LIMIT $1 OFFSET $2
             `
+            let results = await db.query(query, [limit, offset])
 
-            return db.query(query, [limit, offset])
+            return results.rows
         } catch (err) {
             console.error(err)
         }

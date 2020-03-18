@@ -1,28 +1,31 @@
-.login-box.container {
+.session-box.container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header-login {
+.header-session {
     margin: 35px auto;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header-login .logo {
+.header-session .logo {
     margin: 0 0 140px;
 }
 
-.header-login .login-context h3 {
+.header-session .login-context h3,
+.header-session .forgot-context h3 {
     font-family: Helvetica;
     font-size: 24px;
+    line-height: 29px;
     color: #111111;
     text-align: center;
 }
 
-.login.container.form {
+.login.container.form,
+.forgot.container.form {
     width: 500px;
     margin: 0px auto;
     align-self: center;
@@ -64,6 +67,10 @@ div.footer ul {
     list-style: none;
     align-items: center;
     justify-content: space-between;
+}
+
+.forgot.container div.footer ul {
+    justify-content: flex-end;
 }
 
 div.footer li a {

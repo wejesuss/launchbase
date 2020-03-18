@@ -8,7 +8,9 @@
 <div class="wrapper">
     <div class="chef-dashboard">
         <h4>Chef: {{ chef.name }}</h4>
-        <a href="/admin/chefs/{{chef.id}}/edit"><button>Editar chef</button></a>
+        {% if session.isAdmin %}
+            <a href="/admin/chefs/{{chef.id}}/edit"><button>Editar chef</button></a>
+        {% endif %}
     </div>
     <div class="chef-header">
         <img src="{{chef.avatar_url}}" alt="{{chef.name}}">

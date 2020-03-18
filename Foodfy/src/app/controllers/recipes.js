@@ -10,8 +10,7 @@ exports.index = async function(req, res) {
     let offset = limit * (page - 1)
     const params = {limit, offset}
 
-    let results = await Recipes.paginate(params)
-    const recipes = results.rows
+    const recipes = await Recipes.paginate(params)
     
     let pagination
     if(recipes[0]) {
@@ -22,10 +21,10 @@ exports.index = async function(req, res) {
         }
     }
 
-    const searchFilesPromise = recipes.map(recipe => RecipeFiles.find(recipe.id))
+    const searchFilesPromise = recipes.map(recipe => RecipeFiles.find({ where: {recipe_id: recipe.id} }))
     let files = await Promise.all(searchFilesPromise)
     files = files.reduce((imagesArray, currentImage) => {
-        if(currentImage.rows[0]) imagesArray.push(currentImage.rows[0])
+        if(currentImage[0]) imagesArray.push(currentImage[0])
 
         return imagesArray
     }, [])
@@ -36,10 +35,9 @@ exports.index = async function(req, res) {
 }
 
 exports.create = async function(req, res) {
-    const results = await Recipes.recipeSelectOptions()
-    const options = results.rows
+    const options = await Recipes.recipeSelectOptions()
 
-    if(!options) return res.send("Chefs not found! You can not create a recipe!")
+    if(!options) return res.redirect("/admin/recipes")
 
     return res.render('admin/recipes/create', {chefs: options})
 }
@@ -62,6 +60,7 @@ exports.post = async function(req, res) {
     
     filesIds = filesIds.map(file => (file.rows[0].id)).sort()
 
+    req.body.user_id = req.session.userId
     let results = await Recipes.create(req.body)
     const recipeId = results.rows[0].id
 
@@ -74,13 +73,11 @@ exports.post = async function(req, res) {
 exports.show = async function(req, res) {
     const { id } = req.params
 
-    let results = await Recipes.find(id)
-    const recipe = results.rows[0]
+    const recipe = await Recipes.find({ where: {id} })
 
     if (!recipe) return res.send("Recipe not found!")
 
-    results = await RecipeFiles.find(recipe.id)
-    let files = results.rows
+    let files = await RecipeFiles.find({ where: {recipe_id: recipe.id} })
     files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
 
     return res.render("admin/recipes/recipe", {recipe, files})
@@ -89,19 +86,14 @@ exports.show = async function(req, res) {
 exports.edit = async function(req, res) {
     const { id } = req.params
     
-    let results = await Recipes.find(id)
-    const recipe = results.rows[0]
+    const recipe = await Recipes.find({ where: {id} })
 
-    if (!recipe) {
-        return res.send("Recipe not found!")
-    }
+    if (!recipe) return res.send("Recipe not found!")
 
-    results = await RecipeFiles.find(recipe.id)
-    let files = results.rows
+    let files = await RecipeFiles.find({ where: {recipe_id: recipe.id} })
     files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
     
-    results = await Recipes.recipeSelectOptions()
-    const options = results.rows
+    const options = await Recipes.recipeSelectOptions()
 
     return res.render('admin/recipes/edit', { recipe, chefs: options, files })
 }
@@ -118,14 +110,18 @@ exports.put = async function(req, res) {
     }
     
     if(removed_files) {
-        const oldFiles = await RecipeFiles.find(req.body.id)
+        const oldFiles = await RecipeFiles.find({ where: {recipe_id: req.body.id} })
 
         const removedFiles = removed_files.split(',')
         const lastIndex = removedFiles.length - 1
         removedFiles.splice(lastIndex, 1)
 
-        if (req.files.length == 0 && removedFiles.length == oldFiles.rows.length) {
-            return res.send("Please send at least one image!")
+        if ((req.files && req.files.length == 0) && removedFiles.length == oldFiles.length) {
+            return res.render("admin/recipes/edit", {
+                recipe: req.body,
+                files: req.files,
+                error: "Mande ao menos uma imagem!"
+            })
         }
 
         const removedFilesPromise = removedFiles.map(id => RecipeFiles.delete(id))
@@ -135,8 +131,8 @@ exports.put = async function(req, res) {
 
     let filesIds
     if(req.files.length != 0) {
-        const oldFiles = await RecipeFiles.find(req.body.id)
-        const totalFiles = oldFiles.rows.length + req.files.length
+        const oldFiles = await RecipeFiles.find({ where: {recipe_id: req.body.id} })
+        const totalFiles = oldFiles.length + req.files.length
 
         if(totalFiles <= 5) {
             const filesPromise = req.files.map(file => RecipeFiles.create({...file}))
@@ -158,8 +154,7 @@ exports.put = async function(req, res) {
 exports.delete = async function(req, res) {
     const { id } = req.body
     
-    let results = await RecipeFiles.find(id)
-    const files = results.rows
+    const files = await RecipeFiles.find({ where: {recipe_id: id} })
     
     const removeFilesPromise = files.map(file => RecipeFiles.delete(file.id))
     await Promise.all(removeFilesPromise)

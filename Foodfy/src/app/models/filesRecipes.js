@@ -29,13 +29,26 @@ module.exports = {
             console.error(err)
         }
     },
-    find(recipe_id) {
+    async find(filters) {
         try {
-            return db.query(`SELECT file_id AS id, recipe_id, files.name, files.path
+            let query = `SELECT file_id AS id, recipe_id, files.name, files.path
             FROM recipe_files
-            LEFT JOIN files ON (files.id = recipe_files.file_id)
-            WHERE recipe_files.recipe_id = ${recipe_id}
-            ORDER BY files.name`)
+            LEFT JOIN files ON (files.id = recipe_files.file_id)`
+
+            Object.keys(filters).map(key => {
+                query = `${query} ${key}`
+                
+                Object.keys(filters[key]).map(filter => {
+                    query = `${query} recipe_files.${filter} = '${filters[key][filter]}' `
+                })
+            })
+            query = `${query}
+            ORDER BY files.name
+            `
+
+            let results = await db.query(query)
+            
+            return results.rows
         } catch (err) {
             console.error(err)
         }

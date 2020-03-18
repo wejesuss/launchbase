@@ -12,14 +12,13 @@ const Validate = {
         input.focus()
     },
     clearErrors(input) {
-        input.classList.remove("error")        
+        input.classList.remove("error")      
     },
     isEmail(value) {
         let error = null
 
         const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-        console.log(value.match(emailFormat))
         if(!value.match(emailFormat)) error = "Email inválido"
 
         return {
@@ -36,6 +35,9 @@ const Validate = {
                 alert(`O campo ${input.name} com o valor ${input.value} é inválido!`)
             }
         })
+    },
+    clearBorderError(input) {
+        input.classList.remove("red")
     }
 }
 

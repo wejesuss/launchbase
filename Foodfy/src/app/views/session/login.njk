@@ -8,16 +8,16 @@
 
 {% block content %}
 <section class="login container form">
-    <form method="POST" action="/admin/users/login" onsubmit="Validate.isInvalid(event)">
+    <form method="POST" action="/users/login" onsubmit="Validate.isInvalid(event)">
         
         <div class="fields">
-            {% include 'admin/session/fields.njk' %}
+            {% include 'session/fields.njk' %}
         </div>
 
         <div class="footer">
             <ul>
                 <li>
-                    <a href="/admin/users/forgot-password">Perdeu a senha?</a>
+                    <a href="/users/forgot-password">Perdeu a senha?</a>
                 </li>
                 <li>
                     <button class="button" type="submit">Acessar</button>

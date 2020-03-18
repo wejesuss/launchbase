@@ -12,7 +12,7 @@ module.exports = {
             console.error(err)
         }
     },
-    create(name, file_id) {
+    async create(name, file_id) {
         try {
             const query = `
             INSERT INTO chefs (
@@ -25,30 +25,35 @@ module.exports = {
                 name,
                 file_id
             ]
+            let results = await db.query(query, values)
 
-            return db.query(query, values)
+            return results.rows[0].id
         } catch (err) {
             console.error(err)
         }
     },
-    find(id) {
+    async find(id) {
         try {
-            return db.query(`SELECT chefs.*, count(recipes) AS total_recipes
+            let results = await db.query(`SELECT chefs.*, count(recipes) AS total_recipes
             FROM chefs
             LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
             WHERE chefs.id = ${id}
             GROUP BY chefs.id`)
+
+            return results.rows[0]
         } catch (error) {
             console.error(error)
         }
     },
-    selectRecipesById(id) {
+    async selectRecipesById(id) {
         try {
-            return db.query(`SELECT recipes.*, chefs.name as chef_name
+            let results = await db.query(`SELECT recipes.*, chefs.name as chef_name
             FROM recipes
             LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
             WHERE chefs.id = ${id}
-            ORDER BY recipes.created_at DESC`)    
+            ORDER BY recipes.created_at DESC`)   
+            
+            return results.rows
         } catch (err) {
             console.error(err)
         }
@@ -79,7 +84,7 @@ module.exports = {
             console.error(error)
         }
     },
-    paginate(params) {
+    async paginate(params) {
         try {
             const { limit, offset } = params
 
@@ -95,8 +100,9 @@ module.exports = {
             GROUP BY chefs.id
             ${orderBy} LIMIT $1 OFFSET $2
             `
+            let results = await db.query(query, [limit, offset])
 
-            return db.query(query, [limit, offset])
+            return results.rows
         } catch (err) {
             console.error(err)
         }

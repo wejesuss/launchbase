@@ -5,16 +5,21 @@ const { hash } = require('bcryptjs')
 
 exports.loginForm = function(req, res) {
     try {
-        return res.render("admin/session/login")
+        return res.render("session/login")
     } catch (err) {
         console.error(err)
-        return res.redirect("/admin/")
+        return res.redirect("/")
     }
 }
 
-exports.login = function(req, res) {
+exports.login = async function(req, res) {
     req.session.userId = req.user.id
     try {
+        const currentUser = await User.find({ where: {id: req.session.userId} })
+
+        if(currentUser.is_admin == true)
+            req.session.isAdmin = true
+        
         return res.redirect("/admin/users")
     } catch (err) {
         console.error(err)
@@ -24,7 +29,7 @@ exports.login = function(req, res) {
 exports.logout = function(req, res) {
         try {
             req.session.destroy()
-            return res.redirect("/admin/")
+            return res.redirect("/users/login")
         } catch (err) {
             console.error(err)
         }
@@ -43,18 +48,18 @@ exports.forgot = async function(req, res) {
         try {
             const token = crypto.randomBytes(20).toString("hex")
             
-            let tokenExpires = new Date()
-            tokenExpires = tokenExpires.setHours(tokenExpires.getHours() + 1)
+            let expires = new Date()
+            expires = expires.setHours(expires.getHours() + 1)
 
             await User.update(user.id, {
                 reset_token: token,
-                reset_token_expires: tokenExpires
+                reset_token_expires: expires
             })
-
-            await mailer.sendMail({
+            
+            mailer.sendMail({
+                from: "no-reply@foodfy.com",
                 to: user.email,
-                from: "no-reply@rocketseat.com.br",
-                subject: 'Recuperação de senha.',
+                subject: "Recuperação de senha",
                 html: `<h2>Perdeu a senha?</h2>
                 <p>Não se preocupe, clique no link abaixo para recuperar sua senha.</p>
                 <p>
@@ -66,11 +71,13 @@ exports.forgot = async function(req, res) {
             })
 
             return res.render("session/forgot-password", {
-                success: "Verifique seu email para prosseguir!"
+                success: "Verifique seu Email para prosseguir."
             })
+
         } catch (err) {
             console.error(err)
             return res.render("session/forgot-password", {
+                user,
                 error: "Erro inesperado, tente novamente!"
             })
         }

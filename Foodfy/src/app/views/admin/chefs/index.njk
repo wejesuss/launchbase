@@ -5,7 +5,14 @@
 {% endblock head %}
 
 {% block content %}
-    <h5 style="width: 940px; margin: 50px auto 0; font-size: 24px; color: #111111;">Gerenciar chefs</h5>
+<section id="box">
+    <div class="wrapper" style="display: flex; justify-content: space-between">
+        <h5 style="width: 940px; font-size: 24px; color: #111111;">Gerenciar chefs</h5>
+        {% if session.isAdmin %}
+            <a href="/admin/recipes/create"><button class="new-chef">Novo</button></a>
+        {% endif %}
+    </div>
+
     <main class="chefs" style="margin: 30px auto">
         {% for chef in chefs %}
             <div class="chef">
@@ -25,4 +32,5 @@
         data-total = {{pagination.total}}
         data-limit = {{pagination.limit}}
     ></div>
+</section>
 {% endblock content %}

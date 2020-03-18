@@ -2,26 +2,43 @@ const db = require('../../config/db')
 const fs = require('fs')
 
 module.exports = {
-    create({ filename, path }) {
+    async create({ filename, path }) {
         try {
-            return db.query(
+            let results = await db.query(
                 `INSERT INTO files (
                     name,
                     path
                 ) VALUES ($1, $2)
                 RETURNING id
             `, [filename, path])
-
+            
+            return results.rows[0].id
         } catch (err) {
             console.error(err)
         }
     },
-    find(file_id) {
+    async find(filters) {
         try {
-            return db.query(`SELECT files.*, chefs.file_id AS file_id
+            let query = `SELECT files.*, chefs.file_id AS file_id
             FROM files
             LEFT JOIN chefs ON (files.id = chefs.file_id)
-            WHERE file_id = ${file_id}`)
+            `
+            
+            Object.keys(filters).map(key => {
+                query = `${query} ${key}`
+                
+                Object.keys(filters[key]).map(filter => {
+                    query = `${query} chefs.${filter} = '${filters[key][filter]}' `
+                })
+            })
+
+            query = `${query}
+            ORDER BY files.name
+            `
+            
+            let results = await db.query(query)
+            
+            return results.rows[0]
         } catch (err) {
             console.error(err)
         }
