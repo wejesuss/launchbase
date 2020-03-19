@@ -9,6 +9,7 @@
         <div class="recipe-dashboard">
             <h4>Receita: {{ recipe.title }}</h4>
             {% if session.userId == recipe.user_id %}
+                <a href="/admin/recipes/{{recipe.id}}/edit"><button>Editar receita</button></a>
             {% elseif session.isAdmin %}
                 <a href="/admin/recipes/{{recipe.id}}/edit"><button>Editar receita</button></a>
             {% endif %}

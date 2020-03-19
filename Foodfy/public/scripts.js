@@ -265,7 +265,7 @@ function createPagination(pagination) {
 
     const pages = paginate(selectedPage, total)
     let elements = ''
-    if (!pages[0]) alert(`Nothing found!`)
+    if (!pages[0]) return
 
     for (let page of pages) {
         if (String(page).includes('...')) {

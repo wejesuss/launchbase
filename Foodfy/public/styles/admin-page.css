@@ -68,6 +68,26 @@ div.header div.wrapper > form button.link {
     margin-left: 50px;
 }
 
+.links .links-header > ul {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.links-header > ul li {
+    display: grid;
+    justify-items: center;
+}
+
+.links-header > ul li a:last-child {
+    display: none;
+    transition: all 400ms;
+}
+
+.links-header > ul li:hover a + a {
+    display: initial;
+}
+
 .links-header .link {
     text-transform: uppercase;
     font-size: 15px;
@@ -75,12 +95,20 @@ div.header div.wrapper > form button.link {
     text-align: left;
 }
 
-.links-header .link + .link {
-    margin-left: 25px;
+.links-header .link:hover {
+    filter: brightness(1.5);
 }
 
+.links-header ul > .link + .link {
+    margin-left: 25px;
+}
+    
 .links-header .link.active {
     color: white;
+}
+
+.links-header .link.active:hover {
+    filter: brightness(0.9);
 }
 
 section#box {

@@ -5,26 +5,30 @@ const multer = require('../app/middlewares/multer')
 const recipes = require("../app/controllers/recipes")
 const chefs = require("../app/controllers/chefs")
 const users = require("../app/controllers/users")
-const session = require("../app/controllers/session")
 
+const recipeValidator = require("../app/validators/recipes")
+const chefValidator = require("../app/validators/chefs")
 const { registeredUsersOnly, ownersAndAdminOnly, adminOnly } = require("../app/middlewares/session")
 
-routes.get('/recipes', recipes.index)
+routes.get('/recipes/dashboard', recipeValidator.index, recipes.index)
+
+routes.get('/recipes', recipeValidator.index, recipes.index)
 routes.get('/recipes/create', registeredUsersOnly, recipes.create)
 routes.get('/recipes/:id', recipes.show)
 routes.get('/recipes/:id/edit', ownersAndAdminOnly, recipes.edit)
 
-routes.post('/recipes', multer.array('photos', 5), registeredUsersOnly, recipes.post)
-routes.put('/recipes', multer.array('photos', 5), ownersAndAdminOnly, recipes.put)
+routes.post('/recipes', registeredUsersOnly, multer.array('photos', 5), recipeValidator.post, recipes.post)
+routes.put('/recipes', multer.array('photos', 5), ownersAndAdminOnly, recipeValidator.put, recipes.put)
 routes.delete('/recipes', ownersAndAdminOnly, recipes.delete)
+
 
 routes.get('/chefs', chefs.index)
 routes.get('/chefs/create', adminOnly, chefs.create)
 routes.get('/chefs/:id', chefs.show)
 routes.get('/chefs/:id/edit', adminOnly, chefs.edit)
 
-routes.post('/chefs', adminOnly, multer.single('photos'), chefs.post)
-routes.put('/chefs', adminOnly, multer.single('photos'), chefs.put)
+routes.post('/chefs', adminOnly, multer.single('photos'), chefValidator.post, chefs.post)
+routes.put('/chefs', adminOnly, multer.single('photos'), chefValidator.put, chefs.put)
 routes.delete('/chefs', adminOnly, chefs.delete)
 
 // routes.get('/profile', ProfileController.index) // Mostrar o formulário com dados do usuário logado

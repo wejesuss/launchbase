@@ -147,6 +147,7 @@ $RECYCLE.BIN/
 # Config files
 mailer.js
 lib/mailer.js
+session.js
 config/session.js
 
 

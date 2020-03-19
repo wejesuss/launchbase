@@ -131,6 +131,10 @@ exports.post = async function(req, res) {
                 <p>
                     Tome conta dela ${req.body.name}
                     <br>
+                    Email:
+                    ${req.body.email}
+                    <br>
+                    Senha:
                     <strong>${password}</strong>
                 </p>
             `,

@@ -6,7 +6,7 @@ const home = require('./home')
 const { preventRepeatedLogin, registeredUsersOnly } = require("../app/middlewares/session")
 const session = require("../app/controllers/session")
 
-const { validateLogin, validateForgot } = require("../app/validators/session")
+const { validateLogin, validateForgot, validateReset } = require("../app/validators/session")
 
 // home
 routes.use("/", home)
@@ -20,9 +20,9 @@ routes.use("/admin", registeredUsersOnly, admin)
 
 // reset password /forgot
 routes.get('/users/forgot-password', session.forgotForm)
-// routes.get('/users/password-reset', session.resetForm)
 routes.post('/users/forgot-password', validateForgot, session.forgot)
-// routes.post('/users/password-reset', UserValidator.reset, session.reset)
+routes.get('/users/password-reset', session.resetForm)
+routes.post('/users/password-reset', validateReset, session.reset)
 
 // Alias
 routes.get('/users', function (req, res) {

@@ -32,7 +32,7 @@ async function ownersAndAdminOnly(req, res, next) {
     const recipe = await Recipes.find({ where: {id} })
     const currentUser = await User.find({ where: {id: req.session.userId} })
 
-    if(currentUser.is_admin == false && currentUser.id != recipe.user_id)
+    if(recipe && currentUser.is_admin == false && currentUser.id != recipe.user_id)
         return res.redirect("/admin/recipes/")
     
     next()
