@@ -2,19 +2,17 @@ const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
 const { addSrcToFilesArray } = require('../../lib/utils')
 
-async function renderPaginate(page, limit) {
+async function renderPaginate(page, limit, user_id) {
     try {
-        page = page || 1
-        limit = limit || 4
-        
         let offset = limit * (page - 1)
-        const params = {limit, offset}
+        let params
+        (user_id != null) ? params = {limit, offset, user_id} : params = {limit, offset}
     
         const recipes = await Recipes.paginate(params)
         
-        if(!recipes[0]) return res.render("admin/recipes/index", {
+        if(!recipes[0]) return {
             error: "Nenhuma receita encontrada!"
-        })
+        }
 
         let pagination
         if(recipes[0]) {
@@ -61,9 +59,36 @@ async function index(req, res, next) {
         page = page || 1
         limit = limit || 4
     
-        let { recipes, files, pagination } = await renderPaginate(page, limit)
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
+        let { error, recipes, files, pagination } = await renderPaginate(page, limit, null)
+        if(error) return res.render("admin/recipes/index", { error })
         
+        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
+
+        req.pageRecipes = {
+            recipes,
+            files,
+            pagination
+        }
+
+        next() 
+    } catch (err) {
+        console.log(err)
+        return res.redirect("/")
+    }
+}
+
+async function myRecipes(req, res, next) {
+    let { page, limit } = req.query
+    const { userId: user_id } = req.session
+    try {
+        page = page || 1
+        limit = limit || 4
+    
+        let { error, recipes, files, pagination } = await renderPaginate(page, limit, user_id)
+        if(error) return res.render("admin/recipes/index", { error })
+        
+        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
+
         req.pageRecipes = {
             recipes,
             files,
@@ -81,7 +106,7 @@ async function post(req, res, next) {
     try {
         const options = await Recipes.recipeSelectOptions()
 
-        let { recipes, files, pagination } = await renderPaginate(1, 4)
+        let { recipes, files, pagination } = await renderPaginate(1, 4, null)
         files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
         req.recipesForErrorPage = { recipes, files, pagination }
 
@@ -93,7 +118,7 @@ async function post(req, res, next) {
         })
 
         const checkedFields = checkAllFields(req.body)
-        if(checkedFields) return res.render("admin/recipes/create", { checkedFields })
+        if(checkedFields) return res.render("admin/recipes/create", { ...checkedFields })
 
         if(req.files.length == 0) return res.render("admin/recipes/create", {
             recipe: req.body,
@@ -111,7 +136,7 @@ async function put(req, res, next) {
     const { removed_files } = req.body
     try {
         const checkedFields = checkAllFields(req.body)
-        if(checkedFields) return res.render("admin/recipes/edit", { checkedFields })
+        if(checkedFields) return res.render("admin/recipes/edit", { ...checkedFields })
         
         if(removed_files) {
             const oldFiles = await RecipeFiles.find({ where: {recipe_id: req.body.id} })
@@ -145,6 +170,7 @@ async function put(req, res, next) {
 
 module.exports = {
     index,
+    myRecipes,
     post,
     put
 }

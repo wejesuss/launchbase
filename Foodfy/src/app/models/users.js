@@ -1,4 +1,6 @@
 const db = require('../../config/db')
+const fs = require('fs')
+const RecipeFiles = require('../models/filesRecipes')
 
 module.exports = {
     all() {
@@ -92,9 +94,29 @@ module.exports = {
             console.error(err)
         }
     },
-    delete(id) {
+    async delete(id) {
         try {
-            return db.query(`DELETE FROM users WHERE id = $1`, [id])
+            let results = await db.query(`SELECT recipes.* FROM recipes 
+            LEFT JOIN users ON (users.id = recipes.user_id)
+            WHERE users.id = ${id}`)
+            const recipes = results.rows
+
+            const findFilesPromise = recipes.map(recipe =>  RecipeFiles.find({ where: {recipe_id: recipe.id} }))
+            let filesResults = await Promise.all(findFilesPromise)
+
+            await db.query(`DELETE FROM users WHERE id = $1`, [id])
+
+            filesResults.map(results => {
+                results.map(async file => {
+                    try {
+                        await db.query(`DELETE FROM files WHERE id = ${file.id}`)
+                        fs.unlinkSync(file.path)    
+                    } catch (err) {
+                        console.error(err)
+                    }
+                })
+            })
+
         } catch (error) {
             console.error(error)
         }

@@ -1,7 +1,6 @@
 const Chefs = require('../models/chefs')
-const User = require('../models/users')
 const ChefFiles = require('../models/filesChefs')
-const { addSrcToFilesArray } = require('../../lib/utils')
+const { createSrc } = require('../../lib/utils')
 
 function checkAllFields(body) {
     const keys = Object.keys(body)
@@ -16,7 +15,7 @@ function checkAllFields(body) {
     }
 }
 
-async function loadPaginate(page, limit) {
+async function chefsPaginate(page, limit) {
     try {
         let offset = limit * (page - 1)
         const params = {limit, offset}
@@ -38,10 +37,37 @@ async function loadPaginate(page, limit) {
     }
 }
 
+async function listChefs(req, res, next) {
+    let { page, limit } = req.query
+    try {
+        page = page || 1
+        limit = limit || 8
+
+        let { chefs, pagination } = await chefsPaginate(page, limit)
+        
+        const chefsPromise = chefs.map(async chef => {
+            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+
+            if(file)
+                chef.avatar_url = createSrc(file, req.protocol, req.headers.host)
+        })
+        await Promise.all(chefsPromise)
+        
+        req.loadChefs = {
+            chefs,
+            pagination
+        }
+
+        next()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 async function post(req, res, next) {
     try {
         const checkedFields = checkAllFields(req.body)
-        if(checkedFields) return res.render("admin/chefs/create", { checkedFields })
+        if(checkedFields) return res.render("admin/chefs/create", { ...checkedFields })
 
         if(!req.file) return res.render("admin/chefs/create", {
             chef: req.body,
@@ -54,16 +80,49 @@ async function post(req, res, next) {
     }
 }
 
+async function show(req, res, next) {
+    const { id } = req.params
+    try {
+        const chef = await Chefs.find(id)
+    
+        let {chefs, pagination} = await chefsPaginate(1, 8)
+        const chefsPromise = chefs.map(async chef => {
+            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+    
+            if(file)
+                chef.avatar_url = createSrc(file, req.protocol, req.headers.host)
+        })
+        
+        await Promise.all(chefsPromise)
+    
+        if (!chef) {
+            req.listChefs = { chefs, pagination }
+            req.error = { message: "Chefe não encontrado!" }
+        } else {
+            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+            
+            if(file)
+            chef.avatar_url = createSrc(file, req.protocol, req.headers.host)
+            
+            req.chef = chef
+        }
+        
+        next()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 async function put(req, res, next) {
     try {
         const checkedFields = checkAllFields(req.body)
-        if(checkedFields) return res.render("admin/recipes/edit", { checkedFields })
+        if(checkedFields) return res.render("admin/chefs/edit", { ...checkedFields })
         
         const chef = await Chefs.find(req.body.id)
         const hasFile = await ChefFiles.find({ where: {file_id: chef.file_id} })
         
         if(hasFile)
-            hasFile.src = `${req.protocol}://${req.headers.host}${hasFile.path.replace("public", "")}`
+            hasFile.src = createSrc(hasFile, req.protocol, req.headers.host)
         
         if(req.body.removed_files && !req.file) return res.render(`admin/chefs/edit`, { 
             chef, 
@@ -77,7 +136,34 @@ async function put(req, res, next) {
     }
 }
 
+async function chefDelete(req, res, next) {
+    const { id: chef_id, file_id } = req.body
+    try {
+        const recipes = await Chefs.selectRecipesById(chef_id)
+
+        if(file_id == '') file_id = null
+        const file = await ChefFiles.find({ where: {file_id: file_id} })
+        if(file)
+            file.src = createSrc(file, req.protocol, req.headers.host)
+
+        if(recipes[0]) {
+            return res.render("admin/chefs/edit", {
+                chef: req.body,
+                file,
+                error: "Não pode excluir chefes que possuem receitas!"
+            })
+        }
+
+        next()
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     post,
-    put
+    show,
+    put,
+    chefDelete,
+    listChefs
 }

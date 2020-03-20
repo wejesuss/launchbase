@@ -1,4 +1,4 @@
-{% extends 'model.njk' %}
+{% extends 'layout.njk' %}
 
 {% block head %}
     <title>Chef {{chef.name}}</title>
@@ -8,9 +8,6 @@
 <div class="wrapper">
     <div class="chef-dashboard">
         <h4>Chef: {{ chef.name }}</h4>
-        {% if session.isAdmin %}
-            <a href="/admin/chefs/{{chef.id}}/edit"><button>Editar chef</button></a>
-        {% endif %}
     </div>
     <div class="chef-header">
         <img src="{{chef.avatar_url}}" alt="{{chef.name}}">
@@ -23,7 +20,7 @@
     </div>
     <section id="box">
         <h3>Receitas</h3>
-        {% from 'admin/recipes/loadRecipes.njk' import loadRecipes %}
+        {% from './loadRecipes.njk' import loadRecipes %}
         {{loadRecipes(recipes, files)}}
         {% if recipes == '' %}
             <h3>Não possui</h3>

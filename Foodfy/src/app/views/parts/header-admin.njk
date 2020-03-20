@@ -11,8 +11,12 @@
             </li>
         
             <a class="link" href="/admin/chefs">Chefs</a>
-    
-            <a class="link" href="/admin/users">Usuários</a>
+
+            {% if session.isAdmin %}
+                <a class="link" href="/admin/users">Usuários</a>
+            {% else %}
+                <a class="link" href="/admin/profile">Usuário</a>
+            {% endif %}
         </ul>
         
     </div>

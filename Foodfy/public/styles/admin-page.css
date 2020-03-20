@@ -325,7 +325,8 @@ button[type="submit"] {
 
 /* === CHEF PAGE === */
 
-div.create-box {
+div.create-box,
+div.edit-box {
     width: 940px;
     box-sizing: border-box;
     margin: 0 auto;

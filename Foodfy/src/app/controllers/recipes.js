@@ -4,17 +4,14 @@ const { addSrcToFilesArray } = require('../../lib/utils')
 
 async function renderPaginate(page, limit) {
     try {
-        page = page || 1
-        limit = limit || 4
-        
         let offset = limit * (page - 1)
         const params = {limit, offset}
     
         const recipes = await Recipes.paginate(params)
         
-        if(!recipes[0]) return res.render("admin/recipes/index", {
+        if(!recipes[0]) return {
             error: "Nenhuma receita encontrada!"
-        })
+        }
 
         let pagination
         if(recipes[0]) {

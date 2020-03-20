@@ -115,14 +115,23 @@ module.exports = {
     },
     async paginate(params) {
         try {
-            const { filter, limit, offset } = params
+            const { filter, limit, offset, user_id } = params
 
             let query = "",
                 orderBy = `ORDER BY created_at DESC`,
                 filterQuery = "",
+                limitByUser = "",
                 totalQuery = `(
                 SELECT count(*) FROM recipes
             ) AS total`
+
+            if(user_id) {
+                totalQuery = `(
+                    SELECT count(*) FROM recipes WHERE recipes.user_id = ${user_id}
+                ) AS total`
+
+                limitByUser = `WHERE recipes.user_id = ${user_id}`
+            }
 
             if (filter) {
                 orderBy = `ORDER BY updated_at DESC`
@@ -139,6 +148,7 @@ module.exports = {
                 FROM recipes
                 LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
                 ${filterQuery}
+                ${limitByUser}
                 ${orderBy} LIMIT $1 OFFSET $2
             `
             let results = await db.query(query, [limit, offset])

@@ -11,20 +11,20 @@ function registeredUsersOnly(req, res, next) {
 
 async function adminOnly(req, res, next) {
     if (!req.session.userId) 
-        return res.redirect("/")
+        return res.redirect("/users/login")
 
     let id = req.session.userId
 
     const currentUser = await User.find({ where: {id} })
 
     if(currentUser.is_admin == false)
-        return res.redirect("/admin/")
+        return res.redirect("/admin")
     
     next()
 }
 
 async function ownersAndAdminOnly(req, res, next) {
-    if (!req.session.userId) return res.redirect("/")
+    if (!req.session.userId) return res.redirect("/users/login")
     
     let id = req.body.id
     if(!id) id = req.params.id
@@ -33,14 +33,14 @@ async function ownersAndAdminOnly(req, res, next) {
     const currentUser = await User.find({ where: {id: req.session.userId} })
 
     if(recipe && currentUser.is_admin == false && currentUser.id != recipe.user_id)
-        return res.redirect("/admin/recipes/")
+        return res.redirect("/admin/recipes")
     
     next()
 }
 
 function preventRepeatedLogin(req, res, next) {
     if (req.session.userId) 
-        return res.redirect("/admin/")
+        return res.redirect("/admin")
     
     next()
 }

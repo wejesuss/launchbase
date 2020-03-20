@@ -3,9 +3,9 @@ const routes = express.Router()
 const admin = require('./admin')
 const home = require('./home')
 
-const { preventRepeatedLogin, registeredUsersOnly } = require("../app/middlewares/session")
 const session = require("../app/controllers/session")
 
+const { preventRepeatedLogin, registeredUsersOnly } = require("../app/middlewares/session")
 const { validateLogin, validateForgot, validateReset } = require("../app/validators/session")
 
 // home

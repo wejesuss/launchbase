@@ -5,18 +5,18 @@
 {% endblock head %}
 
 {% block content %}
-    <div class="user-dashboard create">
+    <div class="user-dashboard edit">
         <h5>Atualizar Usuário</h5>
         <div class="options">    
             <form action="/admin/users?_method=DELETE" method="post" class="delete-form">
                 <input type="hidden" name="id" value="{{user.id}}">
                 <button id="button-delete" type="submit">Deletar</button>
             </form>
-            <button type="submit" form="create-user">Salvar</button>
+            <button type="submit" form="edit-user">Salvar</button>
         </div>
     </div>
-    <div class="fields create-box">
-        <form action="/admin/users?_method=PUT" id="create-user" method="post" onsubmit="Validate.isInvalid(event)">
+    <div class="fields edit-box">
+        <form action="/admin/users?_method=PUT" id="edit-user" method="post" onsubmit="Validate.isInvalid(event)">
             {% include "./register-fields.njk" %}
             <input type="hidden" name="id" value="{{user.id}}">
         </form>

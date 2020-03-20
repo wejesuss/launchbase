@@ -19,5 +19,10 @@ module.exports = {
         }))
 
         return filesWithSrc
+    },
+    createSrc(file, reqProtocol, reqHeadersHost) {
+        let src = `${reqProtocol}://${reqHeadersHost}${file.path.replace("public", "")}`
+
+        return src
     }
 }

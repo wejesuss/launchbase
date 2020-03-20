@@ -71,7 +71,8 @@ main.users {
 }
 
 /* USERS REGISTER */
-.user-dashboard.create {
+.user-dashboard.create,
+.user-dashboard.edit {
     margin-bottom: 40px;
 }
 
@@ -88,6 +89,17 @@ main.users {
     display: flex;
     justify-content: space-between;
     margin-bottom: 30px;
+}
+
+.fields .user-fields.grid {
+    margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0px 40px;
+}
+
+.fields .user-fields.grid .item:first-child {
+    margin-right: 0;
 }
 
 .fields .user-fields .item:first-child {

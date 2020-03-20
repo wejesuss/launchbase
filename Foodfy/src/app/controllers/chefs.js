@@ -2,19 +2,6 @@ const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
 const { addSrcToFilesArray } = require('../../lib/utils')
 
-function checkAllFields(body) {
-    const keys = Object.keys(body)
-
-    for (const key of keys) {
-        if (body[key] == "" && key != "file_id" &&  key != "removed_files") {
-            return {
-                user: body,
-                error: "Por favor preencha todos os campos."
-            }
-        }
-    }
-}
-
 async function loadPaginate(page, limit) {
     try {
         let offset = limit * (page - 1)
@@ -107,43 +94,34 @@ exports.post = async function(req, res) {
 
 exports.show = async function(req, res) {
     const { id } = req.params
+    try {
+        const { error, listChefs, chef } = req
 
-    const chef = await Chefs.find(id)
+        if (error) return res.render("admin/chefs/index", {
+            chefs: listChefs.chefs,
+            pagination: listChefs.pagination,
+            error: error.message
+        })
+
+        const recipes = await Chefs.selectRecipesById(id)
+        
+        const searchFilesPromise = recipes.map(recipe => ChefFiles.findRecipesFiles(recipe.id))
+        let files = await Promise.all(searchFilesPromise)
+        files = files.reduce((imagesArray, currentImage) => {
+            if(currentImage.rows[0]) imagesArray.push(currentImage.rows[0])
     
-    let {chefs, pagination} = await loadPaginate(1, 8)
-    const chefsPromise = chefs.map(async chef => {
-        const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
-
-        if(file)
-            chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-    })
+            return imagesArray
+        }, [])
     
-    await Promise.all(chefsPromise)
-
-    if (!chef) return res.render("admin/chefs/index", {
-        chefs,
-        pagination,
-        error: "Chefe não encontrado!"
-    })
-
-    const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
-
-    if(file)
-        chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-
-    const recipes = await Chefs.selectRecipesById(id)
+        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
     
-    const searchFilesPromise = recipes.map(recipe => ChefFiles.findRecipesFiles(recipe.id))
-    let files = await Promise.all(searchFilesPromise)
-    files = files.reduce((imagesArray, currentImage) => {
-        if(currentImage.rows[0]) imagesArray.push(currentImage.rows[0])
-
-        return imagesArray
-    }, [])
-
-    files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
-
-    return res.render('admin/chefs/chef', { chef, recipes, files })
+        return res.render('admin/chefs/chef', { chef, recipes, files })   
+    } catch (err) {
+        console.error(err)
+        return res.render("admin/chefs/chef", {
+            error: "Erro inesperado, tente novamente!"
+        })
+    }
 }
 
 exports.edit = async function(req, res) {
@@ -223,36 +201,26 @@ exports.put = async function(req, res) {
 exports.delete = async function(req, res) {
     const { id: chef_id, file_id } = req.body
     try {
-        const recipes = await Chefs.selectRecipesById(chef_id)
+        if(file_id == '') file_id = null
+
+        await ChefFiles.delete(chef_id, file_id)
+        await Chefs.delete(chef_id)
+
+        let {chefs, pagination} = await loadPaginate(1, 8)
+        const chefsPromise = chefs.map(async chef => {
+            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
     
-        if(recipes[0]) {
-            return res.render("admin/chefs/edit", {
-                chef: req.body,
-                error: "Não pode excluir chefes que possuem receitas!"
-            })
-        } else {
-            if(file_id == '') file_id = null
-    
-            await ChefFiles.delete(chef_id, file_id)
-    
-            await Chefs.delete(chef_id)
-    
-            let {chefs, pagination} = await loadPaginate(1, 8)
-            const chefsPromise = chefs.map(async chef => {
-                const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+            if(file)
+                chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+        })
         
-                if(file)
-                    chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-            })
-            
-            await Promise.all(chefsPromise)
-    
-            return res.render("admin/chefs/index", {
-                chefs,
-                pagination,
-                success: "Chefe deletado com sucesso!"
-            })
-        }
+        await Promise.all(chefsPromise)
+
+        return res.render("admin/chefs/index", {
+            chefs,
+            pagination,
+            success: "Chefe deletado com sucesso!"
+        })
     } catch (err) {
         console.error(err)
     }

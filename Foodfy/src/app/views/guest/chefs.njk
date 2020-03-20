@@ -8,7 +8,7 @@
                     <img src="{{chef.avatar_url}}" alt="{{chef.name}}">
                 </div>
                 <div class="chef-info">
-                    <h5>{{chef.name}}</h5>
+                <a href="/chefs/{{chef.id}}"><h5>{{chef.name}}</h5></a>
                     {% if chef.total_recipes > 1 %}
                         <p>{{chef.total_recipes}} receitas</p>
                     {% else %}

@@ -20,7 +20,7 @@ exports.login = async function(req, res) {
         if(currentUser.is_admin == true)
             req.session.isAdmin = true
         
-        return res.redirect("/admin/users")
+        return res.redirect("/admin/profile")
     } catch (err) {
         console.error(err)
     }
@@ -99,7 +99,6 @@ exports.resetForm = function(req, res) {
 
 exports.reset = async function(req, res) {
     const user = req.user
-
     const { password, token } = req.body
     try {
         const newPassword = await hash(password, 8)
