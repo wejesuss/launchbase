@@ -1,21 +1,10 @@
 const db = require('../../config/db')
-const fs = require('fs')
+
+const Base = require('./Base')
+Base.init({ table: 'files' })
 
 module.exports = {
-    create({ filename, path }) {
-        try {
-            return db.query(
-                `INSERT INTO files (
-                    name,
-                    path
-                ) VALUES ($1, $2)
-                RETURNING id
-            `, [filename, path])
-
-        } catch (err) {
-            console.error(err)
-        }
-    },
+    ...Base,
     createRecipeFiles(recipe_id, file_id) {
         try {
             return db.query(`
@@ -29,11 +18,11 @@ module.exports = {
             console.error(err)
         }
     },
-    async find(filters) {
+    async findAll(filters) {
         try {
             let query = `SELECT file_id AS id, recipe_id, files.name, files.path
-            FROM recipe_files
-            LEFT JOIN files ON (files.id = recipe_files.file_id)`
+            FROM ${this.table}
+            LEFT JOIN recipe_files ON (${this.table}.id = recipe_files.file_id)`
 
             Object.keys(filters).map(key => {
                 query = `${query} ${key}`
@@ -45,7 +34,6 @@ module.exports = {
             query = `${query}
             ORDER BY files.name
             `
-
             let results = await db.query(query)
             
             return results.rows
@@ -57,12 +45,7 @@ module.exports = {
         try {
             await db.query(`DELETE FROM recipe_files WHERE file_id = ${file_id}`)
 
-            let result = await db.query(`SELECT * FROM files WHERE id = ${file_id}`)
-            const file = result.rows[0]
-
-            if (file) fs.unlinkSync(file.path)
-
-            return db.query(`DELETE FROM files WHERE id = $1`, [file_id])
+            return db.query(`DELETE FROM ${this.table} WHERE id = $1`, [file_id])
         } catch (err) {
             console.error(err)
         }

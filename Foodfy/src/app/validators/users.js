@@ -1,5 +1,5 @@
 const User = require('../models/users')
-
+const loadPaginateService = require('../services/loadPaginateService')
 
 function checkAllFields(body) {
     const keys = Object.keys(body)
@@ -14,33 +14,8 @@ function checkAllFields(body) {
     }
 }
 
-async function renderPaginate(page, limit) {    
-    try {
-        let offset = limit * (page - 1)
-        const params = {limit, offset}
-    
-        const users = await User.paginate(params)
-    
-        let pagination
-        if(users[0]) {
-            pagination = {
-                total: Math.ceil(users[0].total / limit),
-                page,
-                limit
-            }
-        }
-    
-        return { 
-            users, 
-            pagination 
-        }   
-    } catch (err) {
-        console.error(err)
-    }
-}
-
 async function verifyUserIsAdmin(userId) {
-    const user = await User.find({ where: {id: userId} })
+    const user = await User.findOne({ where: {id: userId} })
     
     if(user && user.is_admin == true) return {
         isAdmin: true,
@@ -54,9 +29,9 @@ async function index(req, res, next) {
         page = page || 1
         limit = limit || 6
         
-        const { users, pagination } = await renderPaginate(page, limit)
+        const { users, pagination } = await loadPaginateService.load('Users', page, limit)
 
-        if(!users) return res.render("admin/isAdmin/listUsers", {
+        if(!users[0]) return res.render("admin/isAdmin/listUsers", {
             error: "Erro ao carregar usuários!"
         })
 
@@ -75,7 +50,7 @@ async function post(req, res, next) {
         const checkedFields = checkAllFields(req.body)
         if(checkedFields) return res.render("admin/isAdmin/register", { ...checkedFields })
         
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
         if (user) {
             return res.render("admin/isAdmin/register", {
                 user: req.body,
@@ -94,12 +69,12 @@ async function show(req, res, next) {
     try {
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
 
-        const user = await User.find({ where: {id} })
+        const user = await User.find(id)
     
-        const {users, pagination} = await renderPaginate(1, 6)
+        const { users, pagination } = await loadPaginateService.load('Users', 1, 6)
         if (!user) return res.render("admin/isAdmin/listUsers", {
             users,
-            pagination,
+            pagination: {},
             error: "Usuário não encontrado!"
         })
 
@@ -124,7 +99,7 @@ async function show(req, res, next) {
 
 async function put(req, res, next) {
     try {
-        const {users, pagination} = await renderPaginate(1, 6)
+        const { users, pagination } = await loadPaginateService.load('Users', 1, 6)
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
         if(userIsAdmin.isPrincipal == false && req.body.id == 1) return res.render("admin/isAdmin/listUsers", {
             users,
@@ -135,7 +110,7 @@ async function put(req, res, next) {
         const checkedFields = checkAllFields(req.body)
         if(checkedFields) return res.render("admin/isAdmin/user", { ...checkedFields })
     
-        const user = await User.find({ where: {id: req.body.id} })
+        const user = await User.findOne({ where: {id: req.body.id} })
 
         let isAdmin = false
         if(!req.body.is_admin && userIsAdmin.isPrincipal == true) isAdmin = false
@@ -156,7 +131,7 @@ async function put(req, res, next) {
 async function userDelete(req, res, next) {
     try {
         const userIsAdmin = await verifyUserIsAdmin(req.session.userId)
-        const {users, pagination} = await renderPaginate(1, 6)
+        const { users, pagination } = await loadPaginateService.load('Users', 1, 6)
 
         const userToBeDelete = await verifyUserIsAdmin(req.body.id)
 

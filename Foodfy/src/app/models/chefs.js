@@ -1,110 +1,53 @@
-const db = require('../../config/db')
+const connection = require('./database')
+
+const Base = require('./Base')
+Base.init({ table: "chefs" })
 
 module.exports = {
-    all() {
-        try {
-            return db.query(`SELECT chefs.*, count(recipes) AS total_recipes
-            FROM chefs
-            LEFT JOIN recipes ON (recipes.chef_id = chefs.id)
-            GROUP BY chefs.id
-            ORDER BY total_recipes DESC`)
-        } catch (err) {
-            console.error(err)
-        }
-    },
-    async create(name, file_id) {
-        try {
-            const query = `
-            INSERT INTO chefs (
-                name,
-                file_id
-            ) VALUES ($1, $2)
-            RETURNING id`
-
-            const values = [
-                name,
-                file_id
-            ]
-            let results = await db.query(query, values)
-
-            return results.rows[0].id
-        } catch (err) {
-            console.error(err)
-        }
-    },
+    ...Base,
     async find(id) {
         try {
-            let results = await db.query(`SELECT chefs.*, count(recipes) AS total_recipes
-            FROM chefs
-            LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
-            WHERE chefs.id = ${id}
-            GROUP BY chefs.id`)
-
-            return results.rows[0]
-        } catch (error) {
-            console.error(error)
-        }
-    },
-    async selectRecipesById(id) {
-        try {
-            let results = await db.query(`SELECT recipes.*, chefs.name as chef_name
-            FROM recipes
-            LEFT JOIN chefs ON (chefs.id = recipes.chef_id)
-            WHERE chefs.id = ${id}
-            ORDER BY recipes.created_at DESC`)   
-            
-            return results.rows
-        } catch (err) {
-            console.error(err)
-        }
-    },
-    update(name, file_id, id) {
-        try {
-            const query = `
-            UPDATE chefs SET
-                name = ($1),
-                file_id = ($2)
-            WHERE id = $3
-            `
-            const values = [
-                name,
-                file_id,
-                id
-            ]
-
-            return db.query(query, values)
-        } catch (err) {
-            console.error(err)
-        }
-    },
-    delete(id) {
-        try {
-            return db.query(`DELETE FROM chefs WHERE id = $1`, [id])
+            const results = await connection(`${this.table}`).select([`${this.table}.*`])
+                .leftJoin('recipes', 'chefs.id', '=', 'recipes.chef_id').count('recipes as total_recipes')
+                .where('chefs.id', id).groupBy('chefs.id')
+            return results[0]
         } catch (error) {
             console.error(error)
         }
     },
     async paginate(params) {
         try {
-            const { limit, offset } = params
+            let { limit, offset } = params
+            if(limit < 0 ||offset < 0) {
+                limit *= -1
+                offset *= -1
+            }
 
-            let query = "",
-                orderBy = `ORDER BY total_recipes DESC`,
-                totalQuery = `SELECT chefs.*, count(recipes) AS total_recipes, (
-                    SELECT count(*) FROM chefs
-                ) AS total`
+            const { count: total } = await connection(`${this.table}`).count().first()
+            const results = await connection(`${this.table}`)
+                .select([`${this.table}.*`])
+                .leftJoin('recipes', 'chefs.id', '=', 'recipes.chef_id').count('recipes as total_recipes')
+                .groupBy('chefs.id')
+                .limit(limit).offset(offset).orderBy('total_recipes', 'desc')
 
-            query = `${totalQuery}, chefs.name as chef_name
-            FROM chefs
-            LEFT JOIN recipes ON (recipes.chef_id = chefs.id)
-            GROUP BY chefs.id
-            ${orderBy} LIMIT $1 OFFSET $2
-            `
-            let results = await db.query(query, [limit, offset])
-
-            return results.rows
+            results.map(result => result.total = total)
+         
+            return results
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    async selectRecipesById(id) {
+        try {
+            const results = await connection('recipes')
+                .select(['recipes.*', 'chefs.name as chef_name'])
+                .leftJoin('chefs', 'chefs.id', '=', 'recipes.chef_id')
+                .where('chefs.id', id)
+                .orderBy('recipes.created_at', 'desc')
+            
+            return results
         } catch (err) {
             console.error(err)
         }
-    }
+    },
 }

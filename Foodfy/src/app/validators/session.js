@@ -1,10 +1,11 @@
-const User = require('../models/users')
 const { compare } = require('bcryptjs')
+
+const User = require('../models/users')
 
 async function validateLogin(req, res, next) {
     let { email, password } = req.body
     try {
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
 
         if(!user) return res.render("session/login", {
             user: req.body,
@@ -32,9 +33,8 @@ async function validateLogin(req, res, next) {
 
 async function validateForgot(req, res, next) {
     const { email } = req.body
-
     try {
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
         
         if(!user) return res.render("session/forgot-password", {
             user: req.body,
@@ -67,9 +67,8 @@ async function validateForgot(req, res, next) {
 
 async function validateReset(req, res, next) {
     const { token, email, password, passwordRepeat } = req.body
-
     try {
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
 
         if(!user) return res.render("session/password-reset", {
             user: req.body,
@@ -83,7 +82,7 @@ async function validateReset(req, res, next) {
             error: "Senhas não coincidem."
         })
 
-        if(token != user.reset_token) return res.render("session/password-reset", {
+        if(!token || (token != user.reset_token)) return res.render("session/password-reset", {
             user: req.body,
             token,
             error: "Token inválido. Solicite um novo, ou tente novamente!"

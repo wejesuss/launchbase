@@ -145,10 +145,10 @@ $RECYCLE.BIN/
 *.lnk
 
 # Config files
-mailer.js
 lib/mailer.js
-session.js
 config/session.js
+session.js
+mailer.js
 
 
 # End of https://www.gitignore.io/api/node,windows,visualstudiocode

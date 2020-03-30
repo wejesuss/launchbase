@@ -41,7 +41,6 @@ const Validate = {
     }
 }
 
-
 const PhotosUpload = {
     uploadLimit: 5,
     input: "",
@@ -266,16 +265,16 @@ function createPagination(pagination) {
     const pages = paginate(selectedPage, total)
     let elements = ''
     if (!pages[0]) return
-
+    
     for (let page of pages) {
         if (String(page).includes('...')) {
             elements += `<span>${page}</span>`
         } else {
             if (filter) {
                 if (page == selectedPage) {
-                    elements += `<a class="active" href="?page=${page}&limit=${limit}&&filter=${filter}">${page}</a>`
+                    elements += `<a class="active" href="?page=${page}&limit=${limit}&filter=${filter}">${page}</a>`
                 } else {
-                    elements += `<a href="?page=${page}&limit=${limit}&&filter=${filter}">${page}</a>`
+                    elements += `<a href="?page=${page}&limit=${limit}&filter=${filter}">${page}</a>`
                 }
             } else {
                 if (page == selectedPage) {

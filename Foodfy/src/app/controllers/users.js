@@ -1,51 +1,24 @@
-const User = require('../models/users')
+const { unlinkSync } = require('fs')
 const { randomBytes } = require('crypto')
 const { hash } = require('bcryptjs')
+
+const User = require('../models/users')
+const RecipeFiles = require('../models/filesRecipes')
+const loadPaginateService = require('../services/loadPaginateService')
+
 const mailer = require('../../lib/mailer')
 
-function checkAllFields(body) {
-    const keys = Object.keys(body)
-
-    for (const key of keys) {
-        if (body[key] == "") {
-            return {
-                user: body,
-                error: "Por favor preencha todos os campos."
-            }
-        }
-    }
-}
-
-async function renderPaginate(page, limit) {    
-   
-    let offset = limit * (page - 1)
-    const params = {limit, offset}
-
-    const users = await User.paginate(params)
-
-    let pagination
-    if(users[0]) {
-        pagination = {
-            total: Math.ceil(users[0].total / limit),
-            page,
-            limit
-        }
-    }
-
-    return { 
-        users, 
-        pagination 
-    }
-}
-
-async function verifyUserIsAdmin(userId) {
-    const user = await User.find({ where: {id: userId} })
-    
-    if(user && user.is_admin == true) return {
-        isAdmin: true,
-        isPrincipal: (user.id == 1) ? true : false
-    }
-}
+const email = (name, email, password) => `<h5>Sua senha chegou :)</h5>
+<p>Aqui está sua senha do seu usuário foodfy, você pode alterá-la a qualquer momento!</p>
+<p>
+    Tome conta dela ${name}
+    <br>
+    Email:
+    ${email}
+    <br>
+    Senha:
+    <strong>${password}</strong>
+</p>`
 
 exports.index = async function(req, res) {
     const { users, pagination } = req.listUsers
@@ -70,41 +43,25 @@ exports.registerForm = async function(req, res) {
 
 exports.post = async function(req, res) {
     try {
-        if(!req.body.is_admin) {
-            req.body.is_admin = false
-        } else {
-            req.body.is_admin = true
-        }
+        (!req.body.is_admin) ? req.body.is_admin = false : req.body.is_admin = true
 
         const password = randomBytes(8).toString("hex")
         req.body.password = await hash(password, 8)
 
         await User.create(req.body)
-
         await mailer.sendMail({
             from: 'no-reply@foodfy.com',
             to: req.body.email,
             subject: 'Senha usuario Foodfy',
-            html: `
-                <h5>Sua senha chegou :)</h5>
-                <p>Aqui está sua senha do seu usuário foodfy, você pode alterá-la a qualquer momento!</p>
-                <p>
-                    Tome conta dela ${req.body.name}
-                    <br>
-                    Email:
-                    ${req.body.email}
-                    <br>
-                    Senha:
-                    <strong>${password}</strong>
-                </p>
-            `,
+            html: email(req.body.name, req.body.email, password)
         })
 
-        return res.render("admin/isAdmin/user", {
-            user: req.body,
-            success: "Usuário cadastrado com sucesso."
+        const {users, pagination} = await loadPaginateService.load('Users', 1, 6)
+        return res.render("admin/isAdmin/listUsers", {
+            users,
+            pagination,
+            success: "Usuário cadastrado com sucesso!"
         }) 
-   
     } catch (err) {
         console.error(err)
         return res.render("admin/isAdmin/register", {
@@ -137,7 +94,7 @@ exports.put = async function(req, res) {
             is_admin
         })
 
-        const {users, pagination} = await renderPaginate(1, 6)
+        const {users, pagination} = await loadPaginateService.load('Users', 1, 6)
         return res.render("admin/isAdmin/listUsers", {
             users,
             pagination,
@@ -160,7 +117,18 @@ exports.delete = async function(req, res) {
         })
         users.splice(index, 1)
 
-        User.delete(req.body.id)
+        const results = await User.delete(req.body.id)
+
+        results.map(result => {
+            result.map(async file => {
+                try {
+                    await RecipeFiles.delete(file.id)
+                    unlinkSync(file.path)
+                } catch (err) {
+                    console.error(err)
+                }
+            })
+        })
 
         return res.render("admin/isAdmin/listUsers", {
             users,

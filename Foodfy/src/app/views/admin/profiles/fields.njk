@@ -18,6 +18,9 @@
             value="{{ user.email }}" required
             placeholder="Digite o email"
             onblur="Validate.apply(this, 'isEmail')"
+            {% if error %}
+                class="red"
+            {% endif %}
             >
         </div>
     </div>

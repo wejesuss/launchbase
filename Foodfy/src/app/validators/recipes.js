@@ -1,52 +1,17 @@
+const { unlinkSync } = require('fs')
+
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
+const loadPaginateService = require('../services/loadPaginateService')
+
 const { addSrcToFilesArray } = require('../../lib/utils')
-
-async function renderPaginate(page, limit, user_id) {
-    try {
-        let offset = limit * (page - 1)
-        let params
-        (user_id != null) ? params = {limit, offset, user_id} : params = {limit, offset}
-    
-        const recipes = await Recipes.paginate(params)
-        
-        if(!recipes[0]) return {
-            error: "Nenhuma receita encontrada!"
-        }
-
-        let pagination
-        if(recipes[0]) {
-            pagination = {
-                total: Math.ceil(recipes[0].total / limit),
-                page,
-                limit
-            }
-        }
-
-        const searchFilesPromise = recipes.map(recipe => RecipeFiles.find({ where: {recipe_id: recipe.id} }))
-        let files = await Promise.all(searchFilesPromise)
-        files = files.reduce((imagesArray, currentImage) => {
-            if(currentImage[0]) imagesArray.push(currentImage[0])
-
-            return imagesArray
-        }, [])
-        
-        return {
-            recipes,
-            pagination,
-            files
-        }
-    } catch (err) {
-        console.error(err)
-    }
-}
 
 function checkAllFields(body) {
     const keys = Object.keys(body)
     for (const key of keys) {
         if (body[key] == "" && key != "information" && key != "removed_files") {
             return {
-                user: body,
+                recipe: body,
                 error: "Por favor preencha todos os campos."
             }
         }
@@ -59,35 +24,8 @@ async function index(req, res, next) {
         page = page || 1
         limit = limit || 4
     
-        let { error, recipes, files, pagination } = await renderPaginate(page, limit, null)
+        let { error, recipes, files, pagination } = await loadPaginateService.load('Recipes', page, limit)
         if(error) return res.render("admin/recipes/index", { error })
-        
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
-
-        req.pageRecipes = {
-            recipes,
-            files,
-            pagination
-        }
-
-        next() 
-    } catch (err) {
-        console.log(err)
-        return res.redirect("/")
-    }
-}
-
-async function myRecipes(req, res, next) {
-    let { page, limit } = req.query
-    const { userId: user_id } = req.session
-    try {
-        page = page || 1
-        limit = limit || 4
-    
-        let { error, recipes, files, pagination } = await renderPaginate(page, limit, user_id)
-        if(error) return res.render("admin/recipes/index", { error })
-        
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
 
         req.pageRecipes = {
             recipes,
@@ -106,13 +44,16 @@ async function post(req, res, next) {
     try {
         const options = await Recipes.recipeSelectOptions()
 
-        let { recipes, files, pagination } = await renderPaginate(1, 4, null)
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
-        req.recipesForErrorPage = { recipes, files, pagination }
+        let { recipes, files, pagination } = await loadPaginateService.load('Recipes', 1, 4)
+        req.recipesForErrorPage = { 
+            recipes, 
+            files, 
+            pagination 
+        }
 
         if(!options) return res.render("admin/recipes/index", {
             recipes,
-            pagination: {},
+            pagination,
             files,
             error: "Erro ao encontrar chefes!"
         })
@@ -139,25 +80,32 @@ async function put(req, res, next) {
         if(checkedFields) return res.render("admin/recipes/edit", { ...checkedFields })
         
         if(removed_files) {
-            const oldFiles = await RecipeFiles.find({ where: {recipe_id: req.body.id} })
+            let oldFiles = await RecipeFiles.findAll({ where: {recipe_id: req.body.id} })
+            oldFiles = await addSrcToFilesArray(oldFiles)
     
             const removedFiles = removed_files.split(',')
             const lastIndex = removedFiles.length - 1
             removedFiles.splice(lastIndex, 1)
     
-            const recipe = await Recipes.find({ where: {id: req.body.id} })
-            let files = await RecipeFiles.find({ where: {recipe_id: recipe.id} })
-            files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
-    
             if ((req.files && req.files.length == 0) && removedFiles.length == oldFiles.length) {
-                return res.render("admin/recipes/recipe", {
-                    recipe,
-                    files,
+                const options = await Recipes.recipeSelectOptions()
+                return res.render("admin/recipes/edit", {
+                    recipe: req.body,
+                    files: oldFiles,
+                    chefs: options,
                     error: "Mande ao menos uma imagem!"
                 })
             }
     
-            const removedFilesPromise = removedFiles.map(id => RecipeFiles.delete(id))
+            const removedFilesPromise = removedFiles.map(async id => {
+                const file = (await RecipeFiles.find(id))
+                try {
+                    unlinkSync(file.path)
+                } catch (err) {
+                    console.error(err)
+                }
+                return RecipeFiles.delete(id)
+            })
                 
             await Promise.all(removedFilesPromise)
         }
@@ -170,7 +118,6 @@ async function put(req, res, next) {
 
 module.exports = {
     index,
-    myRecipes,
     post,
     put
 }

@@ -12,16 +12,16 @@ module.exports = {
             format:`${day}/${month}/${year}`
         }
     },
-    addSrcToFilesArray(files, reqProtocol, reqHeadersHost) {
+    addSrcToFilesArray(files) {
         let filesWithSrc = files.map(file => ({ 
             ...file,
-            src: `${reqProtocol}://${reqHeadersHost}${file.path.replace("public", "")}`
+            src: `${file.path.replace("public", "")}`
         }))
 
         return filesWithSrc
     },
-    createSrc(file, reqProtocol, reqHeadersHost) {
-        let src = `${reqProtocol}://${reqHeadersHost}${file.path.replace("public", "")}`
+    createSrc(file) {
+        let src = `${file.path.replace("public", "")}`
 
         return src
     }

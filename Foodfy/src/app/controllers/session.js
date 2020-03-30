@@ -1,7 +1,17 @@
 const crypto = require('crypto')
-const mailer = require('../../lib/mailer')
-const User = require("../models/users")
 const { hash } = require('bcryptjs')
+
+const User = require("../models/users")
+
+const mailer = require('../../lib/mailer')
+const email = (token) => `<h2>Perdeu a senha?</h2>
+<p>Não se preocupe, clique no link abaixo para recuperar sua senha.</p>
+<p>
+    <a href="http://localhost:3000/users/password-reset?token=${token}" target="_blank">
+    RECUPERAR SENHA
+    </a>
+</p>
+`
 
 exports.loginForm = function(req, res) {
     try {
@@ -13,9 +23,9 @@ exports.loginForm = function(req, res) {
 }
 
 exports.login = async function(req, res) {
-    req.session.userId = req.user.id
     try {
-        const currentUser = await User.find({ where: {id: req.session.userId} })
+        req.session.userId = req.user.id
+        const currentUser = await User.findOne({ where: {id: req.session.userId} })
 
         if(currentUser.is_admin == true)
             req.session.isAdmin = true
@@ -37,6 +47,7 @@ exports.logout = function(req, res) {
 
 exports.forgotForm = function(req, res) {
     try {
+        req.session.destroy()
         return res.render("session/forgot-password")
     } catch (err) {
         console.error(err)
@@ -63,14 +74,7 @@ exports.forgot = async function(req, res) {
             from: "no-reply@foodfy.com",
             to: user.email,
             subject: "Recuperação de senha",
-            html: `<h2>Perdeu a senha?</h2>
-            <p>Não se preocupe, clique no link abaixo para recuperar sua senha.</p>
-            <p>
-                <a href="http://localhost:3000/users/password-reset?token=${token}" target="_blank">
-                RECUPERAR SENHA
-                </a>
-            </p>
-            `
+            html: email(token)
         })
 
         return res.render("session/forgot-password", {
@@ -88,6 +92,7 @@ exports.forgot = async function(req, res) {
 
 exports.resetForm = function(req, res) {
     try {
+        req.session.destroy()
         return res.render("session/password-reset", { token: req.query.token })
     } catch (err) {
         console.error(err)

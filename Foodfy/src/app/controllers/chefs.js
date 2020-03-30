@@ -1,28 +1,10 @@
+const { unlinkSync } = require('fs')
+
 const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
-const { addSrcToFilesArray } = require('../../lib/utils')
+const loadPaginateService = require('../services/loadPaginateService')
 
-async function loadPaginate(page, limit) {
-    try {
-        let offset = limit * (page - 1)
-        const params = {limit, offset}
-
-        const chefs = await Chefs.paginate(params)
-
-        let pagination
-        if(chefs[0]) {
-            pagination = {
-                total: Math.ceil(chefs[0].total / limit),
-                page,
-                limit
-            }
-        }
-
-        return { chefs, pagination }   
-    } catch (err) {
-        console.error(err)
-    }
-}
+const { addSrcToFilesArray, createSrc } = require('../../lib/utils')
 
 exports.index = async function(req, res) {
     let { page, limit } = req.query
@@ -30,18 +12,9 @@ exports.index = async function(req, res) {
         page = page || 1
         limit = limit || 8
 
-        let { chefs, pagination } = await loadPaginate(page, limit)
-        
-        const chefsPromise = chefs.map(async chef => {
-            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
-    
-            if(file)
-                chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-        })
+        let { chefs, pagination } = await loadPaginateService.load('Chefs', page, limit)
 
-        await Promise.all(chefsPromise)
-
-        return res.render('admin/chefs/index', { 
+        return res.render("admin/chefs/index", { 
             chefs, 
             pagination
         })
@@ -55,7 +28,7 @@ exports.index = async function(req, res) {
 
 exports.create = function(req, res) {
     try {
-        return res.render('admin/chefs/create')
+        return res.render("admin/chefs/create")
     } catch (err) {
         console.error(err)
     }
@@ -63,23 +36,24 @@ exports.create = function(req, res) {
 
 exports.post = async function(req, res) {
     try {
-        const fileId = await ChefFiles.create({...req.file})
-
-        if(fileId) {
-            await Chefs.create(req.body.name, fileId)
-            
-            let { chefs } = await loadPaginate(1, 8)
-            const chefsPromise = chefs.map(async chef => {
-                const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+        const fileId = await ChefFiles.create({ name: req.file.filename, path: req.file.path })
         
-                if(file)
-                    chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+        if(fileId) {
+            req.body.file_id = fileId
+            const id = await Chefs.create(req.body)
+            
+            const chef = await Chefs.find(id)
+            const newFile = await ChefFiles.findOne({ where: {file_id: chef.file_id} }, 
+            {   tableB: 'chefs', 
+                rule:'files.id = chefs.file_id'
             })
-
-            await Promise.all(chefsPromise)
-            return res.render('admin/chefs/index', { 
-                chefs, 
-                pagination: {},
+    
+            if(newFile)
+                newFile.src = createSrc(newFile)
+        
+            return res.render("admin/chefs/edit", { 
+                chef, 
+                file: newFile,
                 success: "Chefe criado com sucesso!"
             })
         }
@@ -107,15 +81,9 @@ exports.show = async function(req, res) {
         
         const searchFilesPromise = recipes.map(recipe => ChefFiles.findRecipesFiles(recipe.id))
         let files = await Promise.all(searchFilesPromise)
-        files = files.reduce((imagesArray, currentImage) => {
-            if(currentImage.rows[0]) imagesArray.push(currentImage.rows[0])
+        files = addSrcToFilesArray(files)
     
-            return imagesArray
-        }, [])
-    
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
-    
-        return res.render('admin/chefs/chef', { chef, recipes, files })   
+        return res.render("admin/chefs/chef", { chef, recipes, files })   
     } catch (err) {
         console.error(err)
         return res.render("admin/chefs/chef", {
@@ -128,28 +96,23 @@ exports.edit = async function(req, res) {
     const { id } = req.params
     try {
         const chef = await Chefs.find(id)
-        let { chefs } = await loadPaginate(1, 8)
-        const chefsPromise = chefs.map(async chef => {
-            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
-    
-            if(file)
-                chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-        })
-        
-        await Promise.all(chefsPromise)
-    
+
+        let { chefs } = await loadPaginateService.load('Chefs', 1, 8)
         if (!chef) return res.render("admin/chefs/index", {
             chefs,
             pagination: {},
             error: "Chefe não encontrado!"
         })
     
-        const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
+        const file = await ChefFiles.findOne({ where: {file_id: chef.file_id} }, 
+        {   tableB: 'chefs', 
+            rule:'files.id = chefs.file_id'
+        })
         
         if(file)
-            file.src = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+            file.src = createSrc(file)
     
-        return res.render(`admin/chefs/edit`, { chef, file })   
+        return res.render("admin/chefs/edit", { chef, file })   
     } catch (err) {
         console.error(err)
     }
@@ -164,34 +127,51 @@ exports.put = async function(req, res) {
     
             const removedFilesPromise = removed_files.map(id => ChefFiles.delete(req.body.id, id))
                 
-            await Promise.all(removedFilesPromise)
+            const files = await Promise.all(removedFilesPromise)
+            files.map(file => {
+                try {
+                    unlinkSync(file.path)
+                } catch (err) {
+                    console.log(err)
+                }
+            })
         }
 
         if (req.body.file_id == '') req.body.file_id = null
-        const file = await ChefFiles.find({ where: {file_id: req.body.file_id} })
+        const file = await ChefFiles.findOne({ where: {file_id: req.body.file_id} }, 
+        {   tableB: 'chefs', 
+            rule:'files.id = chefs.file_id'
+        })
     
         let fileId
         if(!file && req.file) {
-            fileId = await ChefFiles.create({...req.file})
+            fileId = await ChefFiles.create({ name: req.file.filename, path: req.file.path })
         }
         
         if(!fileId) fileId = req.body.file_id
     
-        await Chefs.update(req.body.name, fileId, req.body.id)
+        await Chefs.update(req.body.id, {
+            name: req.body.name,
+            file_id: fileId
+        })
         
         const chef = await Chefs.find(req.body.id)
-        const newFile = await ChefFiles.find({ where: {file_id: chef.file_id} })
-        if(newFile)
-            newFile.src = `${req.protocol}://${req.headers.host}${newFile.path.replace("public", "")}`
+        const newFile = await ChefFiles.findOne({ where: {file_id: chef.file_id} }, 
+        {   tableB: 'chefs', 
+            rule:'files.id = chefs.file_id'
+        })
 
-        return res.render(`admin/chefs/edit`, { 
+        if(newFile)
+            newFile.src = createSrc(newFile)
+
+        return res.render("admin/chefs/edit", { 
             chef, 
             file: newFile,
             success: "Chefe atualizado com sucesso!"
         }) 
     } catch (err) {
         console.log(err)
-        return res.render(`admin/chefs/edit`, {
+        return res.render("admin/chefs/edit", {
             chef: req.body,
             error: "Algum erro ocorreu, tente novamente!"
         })
@@ -199,22 +179,20 @@ exports.put = async function(req, res) {
 }
 
 exports.delete = async function(req, res) {
-    const { id: chef_id, file_id } = req.body
+    let { id: chef_id, file_id } = req.body
     try {
         if(file_id == '') file_id = null
 
-        await ChefFiles.delete(chef_id, file_id)
+        const file = await ChefFiles.delete(chef_id, file_id)
+        try {
+            unlinkSync(file.path)
+        } catch (err) {
+            console.log(err)
+        }
+
         await Chefs.delete(chef_id)
 
-        let {chefs, pagination} = await loadPaginate(1, 8)
-        const chefsPromise = chefs.map(async chef => {
-            const file = await ChefFiles.find({ where: {file_id: chef.file_id} })
-    
-            if(file)
-                chef.avatar_url = `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-        })
-        
-        await Promise.all(chefsPromise)
+        let {chefs, pagination} = await loadPaginateService.load('Chefs', 1, 8)
 
         return res.render("admin/chefs/index", {
             chefs,
