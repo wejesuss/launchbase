@@ -2,7 +2,10 @@ const { unlinkSync } = require('fs')
 
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
+
 const loadPaginateService = require('../services/loadPaginateService')
+const formatInformationService = require('../services/formatInformationService')
+const deleteImageService = require('../services/deleteImageService')
 
 const { addSrcToFilesArray } = require('../../lib/utils')
 
@@ -49,11 +52,8 @@ exports.post = async function(req, res) {
         filesIds = filesIds.sort()
     
         req.body.user_id = req.session.userId
-        const arrayOfBrokenLines = req.body.information.split("\r\n")
-        const stringWithLineBreakTags = arrayOfBrokenLines.join('<br>')
-        if (stringWithLineBreakTags) {
-            req.body.information = stringWithLineBreakTags
-        }
+
+        req.body.information = formatInformationService.load('toNewLineTag', req.body.information)
 
         const recipeId = await Recipes.create(req.body)        
         const recipeFilesPromise = filesIds.map(id => RecipeFiles.createRecipeFiles(recipeId, id))
@@ -124,6 +124,8 @@ exports.edit = async function(req, res) {
 
         files = await RecipeFiles.findAll({ where: {recipe_id: recipe.id} })
         files = await addSrcToFilesArray(files)
+
+        recipe.information = formatInformationService.load('toNewLineCharacter', recipe.information)
     
         return res.render('admin/recipes/edit', { recipe, chefs: options, files })   
     } catch (err) {
@@ -151,11 +153,7 @@ exports.put = async function(req, res) {
             await Promise.all(recipeFilesPromise)
         }
         
-        const arrayOfBrokenLines = req.body.information.split("\r\n")
-        const stringWithLineBreakTags = arrayOfBrokenLines.join('<br>')
-        if (stringWithLineBreakTags) {
-            req.body.information = stringWithLineBreakTags
-        }
+        req.body.information = formatInformationService.load('toNewLineTag', req.body.information)
 
         const { id, title, chef_id, ingredients, preparation, information } = req.body
         await Recipes.update(id, { 
@@ -193,11 +191,7 @@ exports.delete = async function(req, res) {
         await Recipes.delete(id)
     
         const removeFilesPromise = files.map(file => {
-            try {
-                unlinkSync(file.path)
-            } catch (err) {
-                console.error(err)
-            }
+            deleteImageService.load('delete', file)
             return RecipeFiles.delete(file.id)
         })
         await Promise.all(removeFilesPromise)

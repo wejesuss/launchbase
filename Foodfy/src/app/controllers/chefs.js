@@ -2,7 +2,9 @@ const { unlinkSync } = require('fs')
 
 const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
+
 const loadPaginateService = require('../services/loadPaginateService')
+const deleteImageService = require('../services/deleteImageService')
 
 const { addSrcToFilesArray, createSrc } = require('../../lib/utils')
 
@@ -129,11 +131,7 @@ exports.put = async function(req, res) {
                 
             const files = await Promise.all(removedFilesPromise)
             files.map(file => {
-                try {
-                    unlinkSync(file.path)
-                } catch (err) {
-                    console.log(err)
-                }
+                deleteImageService.load('delete', file)
             })
         }
 
@@ -184,11 +182,7 @@ exports.delete = async function(req, res) {
         if(file_id == '') file_id = null
 
         const file = await ChefFiles.delete(chef_id, file_id)
-        try {
-            unlinkSync(file.path)
-        } catch (err) {
-            console.log(err)
-        }
+        deleteImageService.load('delete', file)
 
         await Chefs.delete(chef_id)
 

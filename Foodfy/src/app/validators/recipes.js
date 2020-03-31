@@ -2,7 +2,9 @@ const { unlinkSync } = require('fs')
 
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
+
 const loadPaginateService = require('../services/loadPaginateService')
+const deleteImageService = require('../services/deleteImageService')
 
 const { addSrcToFilesArray } = require('../../lib/utils')
 
@@ -99,11 +101,7 @@ async function put(req, res, next) {
     
             const removedFilesPromise = removedFiles.map(async id => {
                 const file = (await RecipeFiles.find(id))
-                try {
-                    unlinkSync(file.path)
-                } catch (err) {
-                    console.error(err)
-                }
+                deleteImageService.load('delete', file)
                 return RecipeFiles.delete(id)
             })
                 

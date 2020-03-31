@@ -6,6 +6,8 @@ const User = require("../models/users")
 const mailer = require('../../lib/mailer')
 const email = (token) => `<h2>Perdeu a senha?</h2>
 <p>Não se preocupe, clique no link abaixo para recuperar sua senha.</p>
+<br>
+<br>
 <p>
     <a href="http://localhost:3000/users/password-reset?token=${token}" target="_blank">
     RECUPERAR SENHA
@@ -103,7 +105,7 @@ exports.resetForm = function(req, res) {
 }
 
 exports.reset = async function(req, res) {
-    const user = req.user
+    const { user } = req
     const { password, token } = req.body
     try {
         const newPassword = await hash(password, 8)
