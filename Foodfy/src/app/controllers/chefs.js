@@ -1,5 +1,3 @@
-const { unlinkSync } = require('fs')
-
 const Chefs = require('../models/chefs')
 const ChefFiles = require('../models/filesChefs')
 
@@ -15,6 +13,8 @@ exports.index = async function(req, res) {
         limit = limit || 8
 
         let { chefs, pagination } = await loadPaginateService.load('Chefs', page, limit)
+
+        if(!chefs[0]) return res.render("admin/chefs/index", { error: "Erro ao carregar chefs!"})
 
         return res.render("admin/chefs/index", { 
             chefs, 
@@ -168,7 +168,7 @@ exports.put = async function(req, res) {
             success: "Chefe atualizado com sucesso!"
         }) 
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return res.render("admin/chefs/edit", {
             chef: req.body,
             error: "Algum erro ocorreu, tente novamente!"

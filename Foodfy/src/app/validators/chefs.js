@@ -104,7 +104,7 @@ async function put(req, res, next) {
 
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 
@@ -132,7 +132,7 @@ async function chefDelete(req, res, next) {
 
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 

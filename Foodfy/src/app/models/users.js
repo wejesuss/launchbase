@@ -1,6 +1,6 @@
-const RecipeFiles = require('../models/filesRecipes')
-
 const db = require('../../config/db')
+
+const RecipeFiles = require('../models/filesRecipes')
 
 const Base = require('./Base')
 Base.init({ table: 'users' })

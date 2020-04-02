@@ -1,4 +1,4 @@
-const connection = require('./database')
+const db = require('../../config/db')
 
 const Base = require('./Base')
 Base.init({ table: "chefs" })
@@ -7,10 +7,16 @@ module.exports = {
     ...Base,
     async find(id) {
         try {
-            const results = await connection(`${this.table}`).select([`${this.table}.*`])
-                .leftJoin('recipes', 'chefs.id', '=', 'recipes.chef_id').count('recipes as total_recipes')
-                .where('chefs.id', id).groupBy('chefs.id')
-            return results[0]
+            const query = `SELECT ${this.table}.*, count(recipes) AS total_recipes
+            FROM ${this.table}
+            LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
+            WHERE chefs.id = ${id}
+            GROUP BY chefs.id
+            `
+
+            const results = await db.query(query)
+
+            return results.rows[0]
         } catch (error) {
             console.error(error)
         }
@@ -23,29 +29,34 @@ module.exports = {
                 offset *= -1
             }
 
-            const { count: total } = await connection(`${this.table}`).count().first()
-            const results = await connection(`${this.table}`)
-                .select([`${this.table}.*`])
-                .leftJoin('recipes', 'chefs.id', '=', 'recipes.chef_id').count('recipes as total_recipes')
-                .groupBy('chefs.id')
-                .limit(limit).offset(offset).orderBy('total_recipes', 'desc')
-
-            results.map(result => result.total = total)
+            const query = `SELECT ${this.table}.*, (SELECT count(*) FROM ${this.table}) AS total, 
+            count(recipes) AS total_recipes
+            FROM ${this.table}
+            LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
+            GROUP BY chefs.id
+            ORDER BY total_recipes DESC
+            LIMIT $1 OFFSET $2
+            `
+            
+            const results = await db.query(query, [limit, offset])
          
-            return results
+            return results.rows
         } catch (error) {
             console.error(error)
         }
     },
     async selectRecipesById(id) {
         try {
-            const results = await connection('recipes')
-                .select(['recipes.*', 'chefs.name as chef_name'])
-                .leftJoin('chefs', 'chefs.id', '=', 'recipes.chef_id')
-                .where('chefs.id', id)
-                .orderBy('recipes.created_at', 'desc')
-            
-            return results
+            let query = `SELECT recipes.*, chefs.name as chef_name
+            FROM recipes
+            LEFT JOIN ${this.table} ON (chefs.id = recipes.chef_id)
+            WHERE chefs.id = ${id}
+            ORDER BY recipes.created_at DESC
+            `
+
+            const results = await db.query(query)
+
+            return results.rows
         } catch (err) {
             console.error(err)
         }

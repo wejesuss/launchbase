@@ -39,7 +39,7 @@ async function index(req, res, next) {
 
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return res.redirect("/admin/")
     }
 }
@@ -123,7 +123,7 @@ async function put(req, res, next) {
 
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return res.redirect("/admin/users")
     }
 }
@@ -150,7 +150,7 @@ async function userDelete(req, res, next) {
 
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 

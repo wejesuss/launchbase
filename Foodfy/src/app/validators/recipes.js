@@ -1,5 +1,3 @@
-const { unlinkSync } = require('fs')
-
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
 
@@ -37,7 +35,7 @@ async function index(req, res, next) {
 
         next() 
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return res.redirect("/")
     }
 }
@@ -110,7 +108,7 @@ async function put(req, res, next) {
         
         next()
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 

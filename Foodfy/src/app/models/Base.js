@@ -1,5 +1,4 @@
 const db = require('../../config/db')
-const connection = require('./database')
 
 async function find(filters, table, join) {
     try {
@@ -74,27 +73,58 @@ const Base = {
     },
     async create(fields) {
         try {
-            const results = await connection(`${this.table}`).insert({
-               ...fields
-            }).returning('id')
+            const keys = []
+            const values = []
+            let query = `INSERT INTO ${this.table}`
 
-            return results[0]
+            Object.keys(fields).map(key => {
+                keys.push(key)
+
+                if (typeof(fields[key]) == 'object') {
+                    values.push(`'{${fields[key]}}'`)
+                } else {
+                    values.push(`'${fields[key]}'`)
+                }
+            })
+
+            query += ` (
+                ${keys.join(',')}
+            ) VALUES (${values.join(',')})
+            RETURNING id
+            `
+            const results = await db.query(query)
+
+            return results.rows[0].id
         } catch (err) {
             console.error(err)
         }
     },
     update(id, fields) {
         try {
-            return connection(`${this.table}`).update({
-                ...fields
-            }).where('id', id)
+            const values = []
+            let query = `UPDATE ${this.table} SET`
+
+            Object.keys(fields).map(key => {
+                if (typeof(fields[key]) == 'object') {
+                    values.push(`${key} = '{${fields[key]}}'`)
+                } else {
+                    values.push(`${key} = '${fields[key]}'`)
+                }
+            })
+
+            query += `
+                ${values.join(',')}
+            WHERE id = ${id}
+            `
+
+            return db.query(query)
         } catch (err) {
             console.error(err)
         }
     },
     delete(id) {
         try {
-            return connection(`${this.table}`).where('id', id).delete()
+            return db.query(`DELETE FROM ${this.table} WHERE id = ${id}`)
         } catch (err) {
             console.error(err)
         }
@@ -103,14 +133,17 @@ const Base = {
         try {
             const { limit, offset } = params
 
-            const { count: total } = await connection(`${this.table}`).count().first()
-            const results = await connection(`${this.table}`)
-                .select([`${this.table}.*`])
-                .limit(limit).offset(offset).orderBy('id', 'asc')
-
-            results.map(result => result.total = total)
-         
-            return results
+            let query = `SELECT ${this.table}.*, (
+                SELECT count(*) FROM ${this.table}
+            ) AS total
+            FROM ${this.table}
+            ORDER BY id ASC
+            LIMIT $1 OFFSET $2
+            `
+            
+            const results = await db.query(query, [limit, offset])
+            
+            return results.rows
         } catch (err) {
             console.error(err)
         }

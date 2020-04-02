@@ -1,7 +1,8 @@
 const express = require('express')
 const routes = express.Router()
+
 const guest = require("../app/controllers/guest")
-const chefs = require("../app/controllers/chefs")
+
 const chefValidator = require("../app/validators/chefs")
 
 routes.get('/', guest.index)

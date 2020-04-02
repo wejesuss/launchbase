@@ -1,5 +1,3 @@
-const { unlinkSync } = require('fs')
-
 const Recipes = require('../models/recipes')
 const RecipeFiles = require('../models/filesRecipes')
 
@@ -54,8 +52,9 @@ exports.post = async function(req, res) {
         req.body.user_id = req.session.userId
 
         req.body.information = formatInformationService.load('toNewLineTag', req.body.information)
+        req.body.title = req.body.title.replace(/(')/g, "$1'")
 
-        const recipeId = await Recipes.create(req.body)        
+        const recipeId = await Recipes.create(req.body)       
         const recipeFilesPromise = filesIds.map(id => RecipeFiles.createRecipeFiles(recipeId, id))
         await Promise.all(recipeFilesPromise)
         
@@ -66,7 +65,7 @@ exports.post = async function(req, res) {
             pagination,
             files,
             success: "Receita criada com sucesso!"
-        })   
+        })
     } catch (err) {
         console.error(err)
         return res.render("admin/recipes/index", {

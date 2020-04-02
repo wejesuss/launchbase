@@ -75,6 +75,7 @@ async function put(req, res, next) {
 async function myRecipes(req, res, next) {
     let { page, limit } = req.query
     const { userId: user_id } = req.session
+    if(limit < 0) limit *= -1
     try {
         page = page || 1
         limit = limit || 4
@@ -94,14 +95,12 @@ async function myRecipes(req, res, next) {
             }
         }
 
-        const searchFilesPromise = recipes.map(recipe => RecipeFiles.findAll({ where: {recipe_id: recipe.id} }))
-        let files = await Promise.all(searchFilesPromise)
-        files = files.reduce((imagesArray, currentImage) => {
-            if(currentImage[0]) imagesArray.push(currentImage[0])
+        const searchFilesPromise = recipes.map(recipe => RecipeFiles.findOne({ where: {recipe_id: recipe.id} }, { 
+        tableB: 'recipe_files', rule: 'files.id = recipe_files.file_id', 
+        aliases: 'file_id AS id, recipe_id, files.name, files.path', orderBy: 'files.name' }))
 
-            return imagesArray
-        }, [])
-        files = await addSrcToFilesArray(files, req.protocol, req.headers.host)
+        let files = await Promise.all(searchFilesPromise)
+        files = await addSrcToFilesArray(files)
         
         req.pageRecipes = {
             recipes,
@@ -111,8 +110,8 @@ async function myRecipes(req, res, next) {
 
         next() 
     } catch (err) {
-        console.log(err)
-        return res.redirect("/admin")
+        console.error(err)
+        return res.redirect("/admin/recipes/dashboard")
     }
 }
 

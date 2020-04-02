@@ -4,8 +4,8 @@ const { hash } = require('bcryptjs')
 
 const User = require('../models/users')
 const RecipeFiles = require('../models/filesRecipes')
-const loadPaginateService = require('../services/loadPaginateService')
 
+const loadPaginateService = require('../services/loadPaginateService')
 const mailer = require('../../lib/mailer')
 
 const email = (name, email, password) => `<h5>Sua senha chegou :)</h5>
@@ -56,15 +56,12 @@ exports.post = async function(req, res) {
             html: email(req.body.name, req.body.email, password)
         })
 
-        const {users, pagination} = await loadPaginateService.load('Users', 1, 6)
-        return res.render("admin/isAdmin/listUsers", {
-            users,
-            pagination,
+        return res.render("messages/success", {
             success: "Usuário cadastrado com sucesso!"
         }) 
     } catch (err) {
         console.error(err)
-        return res.render("admin/isAdmin/register", {
+        return res.render("messages/error", {
             error: "Erro inesperado, tente novamente!"
         })
     }    
@@ -78,7 +75,7 @@ exports.show = async function(req, res) {
         })
     } catch (err) {
         console.error(err)
-        return res.render("admin/isAdmin/register", { 
+        return res.render("messages/error", { 
             error: "Desculpe! Algum erro ocorreu!"
         })
     }
@@ -112,11 +109,6 @@ exports.put = async function(req, res) {
 exports.delete = async function(req, res) {
     const { users, pagination } = req.listUsers
     try {
-        const index = users.findIndex(user => {
-            return user.id == req.body.id
-        })
-        users.splice(index, 1)
-
         const results = await User.delete(req.body.id)
 
         results.map(result => {
@@ -130,9 +122,7 @@ exports.delete = async function(req, res) {
             })
         })
 
-        return res.render("admin/isAdmin/listUsers", {
-            users,
-            pagination,
+        return res.render("messages/success", {
             success: "Conta deletada com sucesso!"
         })
     } catch (err) {

@@ -6,8 +6,8 @@ exports.show = async function(req, res) {
         return res.render("admin/profiles/profile", { user })
     } catch (err) {
         console.error(err)
-        req.session.destroy()
-        return res.render("session/login", {
+        return res.render("admin/profiles/profile", {
+            user: req.body,
             error: "Erro inesperado, tente novamente!"
         })
     }

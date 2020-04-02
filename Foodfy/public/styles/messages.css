@@ -50,3 +50,39 @@
 .messages.error {
     background: #DC4747;
 }
+
+/* messages page */
+.message.error,
+.message.success {
+    padding: 50px 0 112px;
+    text-align: center;
+    margin: auto;
+}
+
+.message.error .information h3,
+.message.success .information h3 {
+    margin: 25px 0;
+    font-size: 32px;
+    color: indianred;
+}
+
+.message.error .information p,
+.message.success .information p {
+    font-size: 18px;
+    color: #777;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.message .lottie.success,
+.message .lottie.error {
+    height: 100px;
+}
+
+.message.success .information h3 {
+    color: #04c231;
+}
+
+.message.success .information p {
+    color: #851cdb;
+}

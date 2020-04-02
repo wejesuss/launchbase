@@ -5,21 +5,21 @@ const Validate = {
         let results = Validate[func](input.value)
         input.value = results.value
 
-        if(results.error) Validate.displayErrors(input)
+        if (results.error) Validate.displayErrors(input)
     },
     displayErrors(input) {
         input.classList.add("error")
         input.focus()
     },
     clearErrors(input) {
-        input.classList.remove("error")      
+        input.classList.remove("error")
     },
     isEmail(value) {
         let error = null
 
         const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-        if(!value.match(emailFormat)) error = "Email inválido"
+        if (!value.match(emailFormat)) error = "Email inválido"
 
         return {
             error,
@@ -28,9 +28,9 @@ const Validate = {
     },
     isInvalid(event) {
         const invalidInputs = document.querySelectorAll(".input input")
-        
+
         invalidInputs.forEach(input => {
-            if(input.classList.contains("error")) {
+            if (input.classList.contains("error")) {
                 event.preventDefault()
                 alert(`O campo ${input.name} com o valor ${input.value} é inválido!`)
             }
@@ -38,6 +38,33 @@ const Validate = {
     },
     clearBorderError(input) {
         input.classList.remove("red")
+    },
+    allFields(event) {
+        const items = document.querySelectorAll('.item input, .item select')
+        const divPhotos = document.querySelector('.item #photos-preview')
+        
+        const message = document.createElement('div')
+        for (const item of items) {
+            const divError = document.querySelector('div.messages.error')
+            if(item.value == '' && item.name != 'is_admin') {
+                message.classList.add('messages', 'error')
+                message.style.position = 'fixed'
+                
+                if((!divPhotos || !divPhotos.children[0]) && item.name == 'photos') {
+                    message.innerHTML = 'Envie ao menos uma imagem,'
+                    event.preventDefault()
+                    
+                    if(divError) divError.parentNode.replaceChild(message, divError)
+                    document.body.append(message)
+                    return
+                }
+                
+                message.innerHTML = 'Preencha todos os campos.'
+                if(divError) divError.parentNode.replaceChild(message, divError)
+                document.body.append(message)
+                event.preventDefault()
+            }
+        }
     }
 }
 
@@ -47,27 +74,27 @@ const PhotosUpload = {
     files: [],
     preview: document.querySelector('#photos-preview'),
     apply(func, params) {
-        if(func.includes('Chefs')) PhotosUpload.uploadLimit = 1
+        if (func.includes('Chefs')) PhotosUpload.uploadLimit = 1
 
-        if(PhotosUpload.uploadLimit > 1) {
+        if (PhotosUpload.uploadLimit > 1) {
             PhotosUpload.preview.style.gridTemplateColumns = "repeat(5, 1fr)"
             PhotosUpload.preview.style.width = "80%"
         }
-        
+
         PhotosUpload[func](params)
     },
     handleFileInputChefs(event) {
         const { files: fileList } = event.target
         PhotosUpload.input = event.target
-        
-        if(PhotosUpload.hasLimit(event)) {
+
+        if (PhotosUpload.hasLimit(event)) {
             PhotosUpload.updateInputFiles()
             return
         }
 
         Array.from(fileList).forEach(file => {
             PhotosUpload.files.push(file)
-            
+
             const reader = new FileReader()
             reader.onload = () => {
                 const image = new Image()
@@ -87,7 +114,7 @@ const PhotosUpload = {
         const { input, preview, uploadLimit } = PhotosUpload
         const { files: fileList } = input
 
-        if(fileList.length > PhotosUpload.uploadLimit) {
+        if (fileList.length > PhotosUpload.uploadLimit) {
             (uploadLimit > 1) ? alert(`Envie no máximo ${PhotosUpload.uploadLimit} fotos!`) : alert(`Envie no máximo ${PhotosUpload.uploadLimit} foto!`)
             event.preventDefault()
             return true
@@ -95,18 +122,18 @@ const PhotosUpload = {
 
         const photosDiv = []
         preview.childNodes.forEach(item => {
-            if(item.classList && item.classList.value == 'photo')
+            if (item.classList && item.classList.value == 'photo')
                 photosDiv.push(item)
         })
 
         const totalPhotos = fileList.length + photosDiv.length
 
-        if(totalPhotos > uploadLimit) {
+        if (totalPhotos > uploadLimit) {
             (uploadLimit > 1) ? alert(`Envie no máximo ${PhotosUpload.uploadLimit} fotos!`) : alert(`Envie no máximo ${PhotosUpload.uploadLimit} foto!`)
             event.preventDefault()
             return true
         }
-        
+
         return false
     },
     getContainer(image) {
@@ -138,21 +165,21 @@ const PhotosUpload = {
     removePhoto(event) {
         const photoDiv = event.target.parentNode
         const newFiles = Array.from(PhotosUpload.preview.children).filter(file => {
-            if(file.classList.contains('photo') && !file.getAttribute('id')) return true
+            if (file.classList.contains('photo') && !file.getAttribute('id')) return true
         })
 
         const index = newFiles.indexOf(photoDiv)
         PhotosUpload.files.splice(index, 1)
         PhotosUpload.updateInputFiles()
-        
+
         photoDiv.remove()
     },
     removePreviousPhoto(event) {
         const photoDiv = event.target.parentNode
-        
-        if(photoDiv.id) {
+
+        if (photoDiv.id) {
             const removedFiles = document.querySelector('input[name="removed_files"]')
-            if(removedFiles) {
+            if (removedFiles) {
                 removedFiles.value += `${photoDiv.id},`
             }
         }
@@ -162,15 +189,15 @@ const PhotosUpload = {
     handleFileInputRecipes(event) {
         const { files: fileList } = event.target
         PhotosUpload.input = event.target
-        
-        if(PhotosUpload.hasLimit(event)) {
+
+        if (PhotosUpload.hasLimit(event)) {
             PhotosUpload.updateInputFiles()
             return
         }
 
         Array.from(fileList).forEach(file => {
             PhotosUpload.files.push(file)
-            
+
             const reader = new FileReader()
             reader.onload = () => {
                 const image = new Image()
@@ -179,7 +206,7 @@ const PhotosUpload = {
                 const div = PhotosUpload.getContainer(image)
 
                 PhotosUpload.preview.appendChild(div)
-            
+
             }
 
             reader.readAsDataURL(file)
@@ -201,7 +228,7 @@ const ImageGallery = {
         ImageGallery.highlightImage.src = target.src
         LightBox.image.src = target.src
     },
-    doubleClick(event) {        
+    doubleClick(event) {
         ImageGallery.setImage(event)
         LightBox.open()
     }
@@ -265,7 +292,7 @@ function createPagination(pagination) {
     const pages = paginate(selectedPage, total)
     let elements = ''
     if (!pages[0]) return
-    
+
     for (let page of pages) {
         if (String(page).includes('...')) {
             elements += `<span>${page}</span>`
@@ -335,7 +362,7 @@ if (formDelete) {
 const ValiteDelete = {
     formDelete(event) {
         const confirmation = confirm("Deseja mesmo deletar?");
-        
+
         if (!confirmation) event.preventDefault();
     }
 }

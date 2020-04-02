@@ -18,7 +18,6 @@ const formatInformationService = {
             return stringWithLineBreakTags
         }
     }
-
 }
 
 module.exports = formatInformationService
