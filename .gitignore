@@ -144,11 +144,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Config files
-lib/mailer.js
-config/session.js
-session.js
-mailer.js
-
-
 # End of https://www.gitignore.io/api/node,windows,visualstudiocode

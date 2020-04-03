@@ -3,38 +3,38 @@
         {
             "id": 1,
             "name": "Jorge Relato",
-            "path": "public/backup-images/chefs/Jorge-Relato.jpg"
+            "path": "public/images/recipes-and-chefs/Jorge-Relato.jpg"
         },
         {
             "id": 2,
             "name": "Ricardo Golvea",
-            "path": "public/backup-images/chefs/Ricardo-Golvea.jpg"
+            "path": "public/images/recipes-and-chefs/Ricardo-Golvea.jpg"
         },
         {
             "id": 3,
             "name": "Fabiano Melo",
-            "path": "public/backup-images/chefs/Fabiano-Melo.jpg"
+            "path": "public/images/recipes-and-chefs/Fabiano-Melo.jpg"
         },
         {
             "id": 4,
             "name": "Vania Steroski",
-            "path": "public/backup-images/chefs/Vania-Steroski.jpg"
+            "path": "public/images/recipes-and-chefs/Vania-Steroski.jpg"
         },
         {
             "id": 5,
             "name": "Júlia Kinoto",
-            "path": "public/backup-images/chefs/Julia-Kinoto.jpg"
+            "path": "public/images/recipes-and-chefs/Julia-Kinoto.jpg"
         },
         {
             "id": 6,
             "name": "Juliano Vieira",
-            "path": "public/backup-images/chefs/Juliano-Vieira.jpg"
+            "path": "public/images/recipes-and-chefs/Juliano-Vieira.jpg"
         }
     ],
     "recipes": [
         {
             "id": 1,
-            "path": "public/backup-images/recipes/burger.png",
+            "path": "public/images/recipes-and-chefs/burger.png",
             "title": "Triplo bacon burger",
             "chef_id": 1,
             "ingredients": [
@@ -59,7 +59,7 @@
         },
         {
             "id": 2,
-            "path": "public/backup-images/recipes/pizza.png",
+            "path": "public/images/recipes-and-chefs/pizza.png",
             "title": "Pizza 4 estações",
             "chef_id": 2,
             "ingredients": [
@@ -81,7 +81,7 @@
         },
         {
             "id": 3,
-            "path": "public/backup-images/recipes/lasanha.png",
+            "path": "public/images/recipes-and-chefs/lasanha.png",
             "title": "Lasanha mac n'' cheese",
             "chef_id": 3,
             "ingredients": [
@@ -102,7 +102,7 @@
         },
         {
             "id": 4,
-            "path": "public/backup-images/recipes/macarrao.png",
+            "path": "public/images/recipes-and-chefs/macarrao.png",
             "title": "Espaguete ao alho",
             "chef_id": 4,
             "ingredients": [
@@ -124,7 +124,7 @@
         },
         {
             "id": 5,
-            "path": "public/backup-images/recipes/doce.png",
+            "path": "public/images/recipes-and-chefs/doce.png",
             "title": "Docinhos pão-do-céu",
             "chef_id": 5,
             "ingredients": [
@@ -146,7 +146,7 @@
         },
         {
             "id": 6,
-            "path": "public/backup-images/recipes/asinha.png",
+            "path": "public/images/recipes-and-chefs/asinha.png",
             "title": "Asinhas de frango ao barbecue",
             "chef_id": 6,
             "ingredients": [
