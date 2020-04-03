@@ -69,5 +69,5 @@ Considere em limpar o banco eventualmente, executando os comandos finais do arqu
 [NodeJS]:https://nodejs.org/en/
 [PostgresSQL]:https://www.postgresql.org/
 [Nunjucks]:https://mozilla.github.io/nunjucks/
-[o projeto]:#
+[o projeto]:https://github.com/wejesuss/Foodfy.git
 [mailtrap]:https://mailtrap.io/
