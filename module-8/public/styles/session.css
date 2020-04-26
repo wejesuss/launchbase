@@ -1,0 +1,41 @@
+section.login.container,
+section.password.container {
+    max-width: 500px;
+}
+
+section.login .fields,
+section.password .fields {
+    margin-bottom: 32px;
+}
+
+section.login .footer ul {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+section.login .footer ul a {
+    color: #777;
+    transition: all 200ms;
+    position: relative;
+}
+
+section.login .footer ul a::after {
+    content: "";
+    width: 0;
+    height: 1px;
+    background-color: #666;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -2px;
+}
+
+section.login .footer ul a:hover::after {
+    width: 100%;
+    transition: all ease-in-out 300ms;
+}
+
+section.login .footer ul a:hover {
+    color: black;
+    font-weight: bold;
+}
