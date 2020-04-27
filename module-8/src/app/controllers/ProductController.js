@@ -86,7 +86,7 @@ module.exports = {
     
             if(req.files && req.files.length != 0) {
                 let oldFiles = await Product.files(req.body.id)[0]
-                oldFiles = (oldFiles) ? oldFiles.total : 0
+                oldFiles = (oldFiles) ? Number(oldFiles.total) : 0
                 const totalFiles = oldFiles + req.files.length
 
                 if(totalFiles <= 6 ) {
@@ -126,10 +126,12 @@ module.exports = {
             
             await Product.delete(req.body.id)
     
-            if(files) {
+            if(files && (files[0].total > 1)) {
+                files.shift()
+                
                 files.map(file => {
                     try {
-                        unlinkSync(file.path)
+                        !file.path.includes('placeholder.png') ? unlinkSync(file.path) : null
                     } catch (err) {
                         console.error(err)
                     }

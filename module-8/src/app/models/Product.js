@@ -35,7 +35,7 @@ module.exports = {
         }
     },
     async files(product_id) {
-        const results = await db.query(`SELECT *, (SELECT count(*) FROM files) AS total 
+        const results = await db.query(`SELECT *, (SELECT count(*) FROM files WHERE product_id = $1) AS total
         FROM files WHERE product_id = $1`, [product_id])
 
         return results.rows
