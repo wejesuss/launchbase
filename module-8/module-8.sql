@@ -132,13 +132,15 @@ ALTER TABLE "products" RENAME TO "products_with_deleted";
 ALTER VIEW "products_without_deleted" RENAME TO "products";
 
 -- restart to run seed.js
+DROP RULE IF EXISTS "delete_product" ON "products_with_deleted";
+
+DELETE FROM products_with_deleted;
 DELETE FROM users;
-DELETE FROM products;
 DELETE FROM files;
 DELETE FROM orders;
 DELETE FROM session;
 
--- restart sequence ids
+-- restart sequence ids (after do this, recreate the rule delete_product)
 ALTER SEQUENCE products_id_seq RESTART WITH 1;
 ALTER SEQUENCE users_id_seq RESTART WITH 1;
 ALTER SEQUENCE files_id_seq RESTART WITH 1;
